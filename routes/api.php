@@ -1,16 +1,12 @@
 <?php
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\DB;
-
-/*Route::get('/test', function () {
-    $users = DB::table('users')->get();
-    return response()->json($users);
-});*/
-
+use App\Http\Controllers\Api\DictionaryController;
 
 Route::get('/test', function () {
-    return response()->json([
-        'status' => 'ok',
-        'data' => ['one', 'two', 'three']
-    ]);
+    $users = DB::table('users')->get();
+    return response()->json($users);
 });
+
+Route::get('/dictionaries/{id}/categories/tree', [DictionaryController::class, 'fullTree']);
+
