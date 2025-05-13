@@ -33,5 +33,11 @@ class Dictionary extends Model
             ->with('childrenRecursive'); // рекурсивно вложенные
     }
 
+    public function properties()
+    {
+        return $this->hasMany(\App\Models\DictionaryProperty::class);
+    }
+
+
 }
 

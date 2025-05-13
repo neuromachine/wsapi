@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Traits\HasParent;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class DictionaryItemCategory extends Model
 {
@@ -21,7 +22,13 @@ class DictionaryItemCategory extends Model
 
     public function DictionaryItems()
     {
-        return $this->belongsToMany(\App\Models\DictionaryItem::class, 'dictionary_items_dictionary_item_categories','dictionary_item_categories_id','dictionary_items_id');
+        return $this->BelongsToMany(
+            \App\Models\DictionaryItem::class,
+            'dictionary_items_dictionary_item_categories',
+            'dictionary_item_categories_id',
+            'dictionary_items_id'
+
+        );
     }
 
     public function childrenRecursive()

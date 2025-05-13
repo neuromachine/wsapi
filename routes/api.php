@@ -10,3 +10,4 @@ Route::get('/test', function () {
 
 Route::get('/dictionaries/{id}/categories/tree', [DictionaryController::class, 'fullTree']);
 
+Route::get('/categories/{slug}/items', [DictionaryController::class, 'itemsBySlug']);
