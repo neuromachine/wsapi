@@ -121,6 +121,18 @@ class DictionaryItem extends Model
         return $this->belongsToMany(\App\Models\Product::class, 'dictionary_item_products','dictionary_item_id','product_id');
     }
 
+    public function properties()
+    {
+        return $this->belongsToMany(DictionaryProperty::class, 'dictionary_item_properties')
+            ->withPivot('value')
+            ->withTimestamps(); // если есть
+    }
+
+    public function propertyValues()
+    {
+        return $this->hasMany(DictionaryItemProperty::class);
+    }
+
 
     /////////////////////////////
 

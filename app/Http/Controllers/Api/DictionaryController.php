@@ -6,12 +6,20 @@ use App\Http\Controllers\Controller;
 use App\Models\DictionaryItemCategory;
 use App\Models\Dictionary;
 use Illuminate\Http\Request;
+use App\Services\TransformService;
 
 class DictionaryController extends Controller
 {
-    public function items($key)
+    public function items($key, TransformService $transformer)
     {
-        dd(Dictionary::where('key', $key)->with(['Dictionaryitems'])->firstOrFail());
+        $dictionary = Dictionary::where('key', $key)
+            ->with(['dictionaryitems.propertyValues.property'])
+            ->firstOrFail()
+            ->toArray();
+
+        return response()->json(
+            $transformer->transform($dictionary)
+        );
     }
 
     public function itemsBySlug($slug)

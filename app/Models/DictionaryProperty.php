@@ -21,4 +21,11 @@ class DictionaryProperty extends Model
     {
         return $this->hasMany(\App\Models\DictionaryItemProperty::class, 'dictionary_property_id');
     }
+
+    public function items()
+    {
+        return $this->belongsToMany(DictionaryItem::class, 'dictionary_item_properties')
+            ->withPivot('value')
+            ->withTimestamps();
+    }
 }
