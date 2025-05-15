@@ -7,16 +7,16 @@ use App\Services\CategoryService;
 
 class CategoryController extends Controller
 {
-    public function index(CategoryService $treeService)
+    public function index(CategoryService $categoryService)
     {
-//        return response()->json($treeService->getTree());
-//        sleep(3);
-        return response()->json($treeService->getSubtreeByKey('portfolio'));
+//        return response()->json($categoryService->getTree());
+//        sleep(rand(3,10));
+        return response()->json($categoryService->getSubtreeByKey('portfolio'));
     }
 
-    public function show(string $slug, CategoryService $treeService)
+    public function show(string $slug, CategoryService $categoryService)
     {
-        return response()->json($treeService->getSubtreeByKey($slug));
+        return response()->json($categoryService->getSubtreeByKey($slug));
     }
 
     public function items($slug)
