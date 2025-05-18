@@ -7,16 +7,18 @@ use App\Services\CategoryService;
 
 class CategoryController extends Controller
 {
-    public function index(CategoryService $categoryService)
+    // TODO: не верное смысловое наименование методов - index,show
+    public function index(CategoryService $categoryService,?string $slug = 'root')
     {
 //        return response()->json($categoryService->getTree());
-//        sleep(rand(3,10));
-        return response()->json($categoryService->getSubtreeByKey('portfolio'));
+//        sleep(rand(2,3));
+//        return response()->json($categoryService->getSubtreeByKey('portfolio'));
+        return response()->json($categoryService->getSubtreeByKey($slug));
     }
 
     public function show(string $slug, CategoryService $categoryService)
     {
-        return response()->json($categoryService->getSubtreeByKey($slug));
+        return response()->json(DictionaryItemCategory::where('key', $slug)->firstOrFail());
     }
 
     public function items($slug)
