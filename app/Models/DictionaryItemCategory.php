@@ -17,7 +17,7 @@ class DictionaryItemCategory extends Model
 
     public function children()
     {
-        return $this->hasMany(__CLASS__, 'parent_id', 'id');
+        return $this->hasMany(__CLASS__, 'parent_id', 'id')->select('id', 'key', 'parent_id', 'name', 'description', 'content');
     }
 
     public function DictionaryItems()

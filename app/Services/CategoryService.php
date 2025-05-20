@@ -19,6 +19,9 @@ class CategoryService
     {
         $category = DictionaryItemCategory::where('key', $key)
             ->with('children')
+//            ->with(['children' => function($q) {
+//                $q->select('id', 'key', 'name','description');
+//            }])
             ->firstOrFail();
 
         return $this->transformTree(collect([$category]))[0];
@@ -42,6 +45,8 @@ class CategoryService
                 'id' => $category->id,
                 'key' => $category->key,
                 'name' => $category->name,
+                'description' => $category->description ?? '',
+                'content' => $category->content,
                 'children' => $this->transformTree($category->children),
             ];
         })->toArray();
