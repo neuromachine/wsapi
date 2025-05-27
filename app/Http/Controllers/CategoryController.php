@@ -16,6 +16,11 @@ class CategoryController extends Controller
         return response()->json($categoryService->getSubtreeByKey($slug));
     }
 
+    public function offers(CategoryService $categoryService, string $slug )
+    {
+        return response()->json($categoryService->getOffersForGroup($slug));
+    }
+
     public function show(string $slug, CategoryService $categoryService)
     {
         return response()->json(DictionaryItemCategory::where('key', $slug)->firstOrFail());

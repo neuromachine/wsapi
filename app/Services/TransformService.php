@@ -49,12 +49,16 @@ class TransformService
         $dataProp = (object)[];
         foreach ($item['properties'] as $arrProp)
         {
-            $arrProp = array_merge($arrProp,$arrProp['pivot']);
-            unset($arrProp['pivot']);
+            if (isset($arrProp['pivot'])) {
+                $arrProp = array_merge($arrProp, $arrProp['pivot']);
+                unset($arrProp['pivot']);
+            }
+
             $dataProp->{$arrProp['key']} = $arrProp;
         }
         $item['props'] = $dataProp;
         unset($item['properties']);
         return $item;
     }
+
 }

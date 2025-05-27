@@ -17,3 +17,5 @@ Route::get('/dictionaries/{key}/items', [DictionaryController::class, 'items']);
 
 Route::get('/item/{slug}', [ItemController::class, 'getItemBySlug']);
 Route::get('/cat/{slug}', [CategoryController::class, 'show']);
+
+Route::get('/group/offers/{slug}', [CategoryController::class, 'offers']);
