@@ -13,15 +13,32 @@ return new class extends Migration
     {
         Schema::create('block_item_property_values', function (Blueprint $table) {
             $table->id();
+
+            // Связь со свойством (property)
             $table->foreignId('property_id')
-                ->constrained('block_item_properties')
+                ->constrained('block_item_properties') // Ссылается на таблицу свойств
                 ->onDelete('cascade');
+
+            // Связь с элементом (item)
+            $table->foreignId('item_id')
+                ->constrained('block_items') // Ссылается на элементы (позиции блока)
+                ->onDelete('cascade');
+
+            // Само значение свойства
             $table->text('value')->nullable();
+
+            // Тип значения (если нужно кастовать, проверять, рендерить и т.п.)
             $table->string('value_type')->default('string'); // string, int, bool, json, file, ref, etc.
+
+            // Локализация значения
             $table->string('locale')->nullable(); // e.g., 'en', 'ru'
+
+            // Версия значения (если потребуется история изменений)
             $table->integer('version')->nullable();
+
             $table->timestamps();
         });
+
     }
 
     /**

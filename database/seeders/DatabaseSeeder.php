@@ -17,11 +17,15 @@ class DatabaseSeeder extends Seeder
 
         $this->call([
             BlocksCategoriesSeeder::class,
+            BlockSeeder::class,
+            BlockItemPropertiesSeeder::class,
+            BlockItemsSeeder::class,
+            BlockItemPropertyValuesSeeder::class,
         ]);
 
-        User::factory()->create([
+/*        User::factory()->create([
             'name' => 'Test User',
             'email' => 'test@example.com',
-        ]);
+        ]);*/
     }
 }

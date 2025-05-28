@@ -13,6 +13,8 @@ return new class extends Migration
     {
         Schema::create('block_item_properties', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('block_id');
+            $table->foreign('block_id')->references('id')->on('blocks')->onDelete('cascade');
 
             $table->string('key')->unique();
             $table->string('name');
