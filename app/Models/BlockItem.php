@@ -16,4 +16,9 @@ class BlockItem extends Model
         return $this->belongsTo(Block::class);
     }
 
+    public function propertyValues()
+    {
+        return $this->hasMany(BlockItemPropertyValue::class, 'item_id');
+    }
+
 }
