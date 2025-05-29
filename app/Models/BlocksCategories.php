@@ -10,4 +10,14 @@ class BlocksCategories extends Model
     {
         return $this->hasMany(BlockItem::class, 'category_id');
     }
+
+    public function children()
+    {
+        return $this->hasMany(self::class, 'parent_id');
+    }
+
+    public function childrenRecursive()
+    {
+        return $this->children()->with('childrenRecursive');
+    }
 }

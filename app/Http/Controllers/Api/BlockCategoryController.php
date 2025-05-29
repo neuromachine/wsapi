@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\BlocksCategories;
 use App\Models\Block;
 use App\Http\Resources\BlockItemResource;
+use App\Http\Resources\BlockCategoryStructureResource;
 
 class BlockCategoryController extends Controller
 {
@@ -24,6 +25,20 @@ class BlockCategoryController extends Controller
             'block' => $block->name,
             'items' => BlockItemResource::collection($items),
         ]);
+    }
+
+    public function structure(?string $slug = null)
+    {
+        $query = BlocksCategories::with('childrenRecursive')
+            ->whereNull('parent_id');
+
+        if ($slug) {
+            $query = BlocksCategories::where('slug', $slug)->with('childrenRecursive');
+        }
+
+        $categories = $query->get();
+
+        return BlockCategoryStructureResource::collection($categories);
     }
 
 }

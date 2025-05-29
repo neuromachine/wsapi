@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Api\DictionaryController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ItemController;
+use \App\Http\Controllers\Api\BlockCategoryController;
 
 Route::get('/test', function () {
     $users = DB::table('users')->get();
@@ -21,4 +22,6 @@ Route::get('/cat/{slug}', [CategoryController::class, 'show']);
 //Route::get('/group/offers/{slug}', [CategoryController::class, 'offers']);
 
 
-Route::get('/group/offers/{slug}', [\App\Http\Controllers\Api\BlockCategoryController::class, 'offers']);
+Route::get('/group/offers/{slug}', [BlockCategoryController::class, 'offers']);
+
+Route::get('blocks/structure/{slug?}', [BlockCategoryController::class, 'structure']);
