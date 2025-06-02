@@ -33,7 +33,7 @@ class BlockCategoryController extends Controller
             ->whereNull('parent_id');
 
         if ($slug) {
-            $query = BlocksCategories::where('slug', $slug)->with('childrenRecursive');
+            $query = BlocksCategories::where('key', $slug)->with('childrenRecursive');
         }
 
         $categories = $query->get();
