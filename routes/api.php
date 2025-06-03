@@ -25,3 +25,5 @@ Route::get('/cat/{slug}', [CategoryController::class, 'show']);
 Route::get('/group/offers/{slug}', [BlockCategoryController::class, 'offers']);
 
 Route::get('blocks/structure/{slug?}', [BlockCategoryController::class, 'structure']);
+
+Route::get('block-categories/{slug}/structure', [BlockCategoryController::class, 'structure']);

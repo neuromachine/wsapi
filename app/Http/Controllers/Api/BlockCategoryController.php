@@ -6,10 +6,16 @@ use App\Http\Controllers\Controller;
 use App\Models\BlocksCategories;
 use App\Models\Block;
 use App\Http\Resources\BlockItemResource;
+
+use App\Repositories\BlockCategoryRepository;
 use App\Http\Resources\BlockCategoryStructureResource;
 
 class BlockCategoryController extends Controller
 {
+
+    // Репозиторий внедряется через DI
+    public function __construct(private BlockCategoryRepository $repo) {}
+
     public function offers(string $slug)
     {
         $category = BlocksCategories::where('key', $slug)->firstOrFail();
@@ -27,6 +33,7 @@ class BlockCategoryController extends Controller
         ]);
     }
 
+    /*
     public function structure(?string $slug = null)
     {
         $query = BlocksCategories::with('childrenRecursive')
@@ -39,6 +46,23 @@ class BlockCategoryController extends Controller
         $categories = $query->get();
 
         return BlockCategoryStructureResource::collection($categories);
+    }
+    */
+
+    /**
+     * Возвращает полную структуру категории и вложенных блоков,
+     * свойств и элементов
+     */
+    public function structure(string $slug): JsonResponse
+    {
+
+        // 1) Repo вернёт "сырые" модели (с их связями)
+        $category = $this->repo->getCategoryWithStructureBySlug($slug);
+
+        dd($category);
+
+        // 2) Resource преобразует модель/коллекции в JSON
+        return response()->json(new BlockCategoryStructureResource($category));
     }
 
 }

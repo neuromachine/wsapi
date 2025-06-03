@@ -20,4 +20,8 @@ class BlocksCategories extends Model
     {
         return $this->children()->with('childrenRecursive');
     }
+
+    public function blocks() {
+        return $this->hasMany(Block::class, 'category_id');
+    }
 }
