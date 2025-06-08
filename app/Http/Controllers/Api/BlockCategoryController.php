@@ -5,57 +5,31 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\BlocksCategories;
 use App\Models\Block;
-use App\Http\Resources\BlockCategoryResource;
-
-
 
 use App\Repositories\BlockCategoryRepository;
-
-
+use App\Http\Resources\BlockCategoryResource;
+use App\Http\Resources\BlockItemResource;
 
 use App\Http\Resources\BlockCategoryStructureResource;
 
-use App\Http\Resources\BlockItemResource;
-
-
 class BlockCategoryController extends Controller
 {
+    protected BlockCategoryRepository $repo;
 
     // Репозиторий внедряется через DI
-    public function __construct(private BlockCategoryRepository $repo) {}
-
-
-    /**
-     * Возвращает полную структуру категории и вложенных блоков,
-     * свойств и элементов
-     */
-    public function index(string $slug)
+    public function __construct(BlockCategoryRepository $repo)
     {
-
-        // 1) Repo вернёт "сырые" модели (с их связями)
-        $category = $this->repo->getCategoryWithStructureBySlug($slug);
-
-//        dd($category);
-
-        // 2) Resource преобразует модель/коллекции в JSON
-        return response()->json(new BlockCategoryResource($category));
+        $this->repo = $repo;
     }
 
-    /**
-     *
-     */
+    public function index(string $slug)
+    {
+        return new BlockCategoryResource($this->repo->getCategoryWithStructureBySlug($slug));
+    }
+
     public function structure(?string $slug = null)
     {
-        if ($slug)
-        {
-            $query = BlocksCategories::where('key', $slug)->with('childrenRecursive');
-        }
-        else
-        {
-            $query = BlocksCategories::with('childrenRecursive')->whereNull('parent_id');
-        }
-
-        return BlockCategoryStructureResource::collection($query->get());
+        return BlockCategoryStructureResource::collection($this->repo->getCategoriesRecursive($slug));
     }
 
     public function offers(string $slug)

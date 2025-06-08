@@ -1,26 +1,25 @@
 <?php
 namespace App\Repositories;
 
-use App\Models\BlocksCategories as BlocksCategory;
+use App\Models\BlocksCategories;
 use Illuminate\Database\Eloquent\Collection;
 
 class BlockCategoryRepository
 {
-    /**
-     * Возвращает модель BlocksCategory со всеми связанными блоками,
-     * свойствами блоков и элементами с их свойствами.
-     *
-     * @param string $key Уникальный идентификатор категории
-     * @return BlocksCategory
-     */
-    public function getCategoryWithStructureBySlug(string $key): BlocksCategory
+
+    public function getCategoriesRecursive(string $key)
     {
+        if($key)
+        {
+            return BlocksCategories::where('key', $key)->with('childrenRecursive')->get();
+        }
+        return BlocksCategories::with('childrenRecursive')->whereNull('parent_id')->get();
+    }
 
-        // 1) Сначала находим категорию
-        $category = BlocksCategory::where('key', $key)->firstOrFail();
 
-        return $category;
-        //dd($category);
+    public function getCategoryWithStructureBySlug(string $key)
+    {
+        return BlocksCategories::where('key', $key)->firstOrFail();
 
         // 2) Загружаем связанные блоки, их свойства и элементы.
         //    Можно добавить любые фильтры, например только активные блоки.
@@ -54,11 +53,7 @@ class BlockCategoryRepository
         return $category;
     }
 
-    /**
-     * Пример: получить список всех категорий вместе с количеством блоков
-     *
-     * @return Collection
-     */
+/*
     public function getAllWithBlockCount(): Collection
     {
         return BlocksCategory::withCount('blocks')
@@ -66,16 +61,10 @@ class BlockCategoryRepository
             ->get();
     }
 
-    /**
-     * Пример: найти категорию по ID с проверкой, что в ней есть активный блок
-     *
-     * @param int $id
-     * @return BlocksCategory|null
-     */
     public function findActiveCategoryWithBlocks(int $id): ?BlocksCategory
     {
         return BlocksCategory::where('id', $id)
             ->whereHas('blocks', fn($q) => $q->where('is_active', true))
             ->first();
-    }
+    }*/
 }

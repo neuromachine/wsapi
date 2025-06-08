@@ -12,7 +12,7 @@ class BlockCategoryStructureResource extends JsonResource
         return array_merge(
             $this->attributesToArray(),
             [
-                'children' => BlockCategoryStructureResource::collection(
+                'child' => BlockCategoryStructureResource::collection(
                     $this->whenLoaded('childrenRecursive')
                 ),
             ]
