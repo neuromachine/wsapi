@@ -28,6 +28,14 @@ class BlockSeeder extends Seeder
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
+            [
+                'id' => 2,
+                'key' => 'works',
+                'name' => 'Работы',
+                'description' => 'Выполненные работы',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
         ]);
     }
 }
