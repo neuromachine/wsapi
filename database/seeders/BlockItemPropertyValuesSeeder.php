@@ -32,6 +32,15 @@ class BlockItemPropertyValuesSeeder extends Seeder
                 ['id' => 8, 'item_id' => 2, 'property_id' => 3, 'value' => '45000'],
                 ['id' => 9, 'item_id' => 2, 'property_id' => 4, 'value' => 'Максимум возможностей и глубокой кастомизации'],
                 ['id' => 10, 'item_id' => 2, 'property_id' => 5, 'value' => '<p>Подходит для зрелого бизнеса с высокими требованиями.</p>'],
+
+
+                ['id' => 11, 'item_id' => 500, 'property_id' => 20, 'value' => 'Магазин шин Шинцентр'],
+                ['id' => 12, 'item_id' => 500, 'property_id' => 21, 'value' => 'https://шинцентр.рф/'],
+                ['id' => 13, 'item_id' => 500, 'property_id' => 22, 'value' => '45000'],
+                ['id' => 14, 'item_id' => 500, 'property_id' => 23, 'value' => 'Интернет магазин крупнейшего в ЮФО поставщика шин и дисков для бизнеса'],
+                ['id' => 15, 'item_id' => 500, 'property_id' => 24, 'value' => '<p>Интернет магазин крупнейшего в ЮФО поставщика шин и дисков для бизнеса</p>'],
+                ['id' => 16, 'item_id' => 500, 'property_id' => 25, 'value' => 'thumb_tyres.png'],
+                ['id' => 17, 'item_id' => 500, 'property_id' => 26, 'value' => 'tyres/desctop_main.png'],
             ]
         );
 
