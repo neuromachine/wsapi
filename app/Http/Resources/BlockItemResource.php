@@ -14,10 +14,11 @@ class BlockItemResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        /*
+        /**/
         $properties = $this->propertyValues->mapWithKeys(function ($val) {
             return [$val->property->key => $val->value];
         });
+
 
         return [
             'id' => $this->id,
@@ -25,9 +26,9 @@ class BlockItemResource extends JsonResource
             'properties' => $properties,
             // добавь при необходимости: 'created_at', 'key', и т.д.
         ];
-        */
 
-        return [
+
+/*        return [
             'id'         => $this->id,
             'block_id'   => $this->block_id,
             'position'   => $this->position,
@@ -35,6 +36,6 @@ class BlockItemResource extends JsonResource
             'properties' => BlockItemPropertyResource::collection(
                 $this->whenLoaded('itemProperties')
             ),
-        ];
+        ];*/
     }
 }

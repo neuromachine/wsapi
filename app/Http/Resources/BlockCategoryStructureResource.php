@@ -8,7 +8,7 @@ class BlockCategoryStructureResource extends JsonResource
 {
     public function toArray($request)
     {
-        /*
+
         return array_merge(
             $this->attributesToArray(),
             [
@@ -17,7 +17,7 @@ class BlockCategoryStructureResource extends JsonResource
                 ),
             ]
         );
-        */
+        /*
         return [
             'id'    => $this->id,
             'slug'  => $this->slug,
@@ -28,5 +28,6 @@ class BlockCategoryStructureResource extends JsonResource
                 $this->whenLoaded('blocks')
             ),
         ];
+        */
     }
 }

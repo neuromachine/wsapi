@@ -22,8 +22,31 @@ Route::get('/cat/{slug}', [CategoryController::class, 'show']);
 //Route::get('/group/offers/{slug}', [CategoryController::class, 'offers']);
 
 
-Route::get('/group/offers/{slug}', [BlockCategoryController::class, 'offers']);
+#Route::get('/group/offers/{slug}', [BlockCategoryController::class, 'offers']);
 
-Route::get('blocks/structure/{slug?}', [BlockCategoryController::class, 'structure']);
+#Route::get('blocks/structure/{slug?}', [BlockCategoryController::class, 'structure']);
 
-Route::get('block-categories/{slug}/structure', [BlockCategoryController::class, 'structure']);
+#Route::get('block-categories/{slug}/structure', [BlockCategoryController::class, 'structure']);
+
+
+
+Route::prefix('blocks/categories')
+    ->controller(BlockCategoryController::class)
+    ->name('blocks.categories.')
+    ->group(function () {
+
+        Route::get('{slug}', 'index')->name('index');
+        Route::get('structure/{slug?}', 'structure')->name('structure');
+        Route::get('offers/{slug}', 'offers')->name('offers');
+
+
+        // Корневые действия без идентификатора
+        Route::get('structure', 'rootStructure')->name('structure.root');
+        Route::get('create', 'create')->name('create');
+
+        // Если понадобится ID вместо slug
+        Route::get('edit/{id}', 'edit')->name('edit');
+
+        // Универсальный маршрут с GET-параметрами
+        Route::get('search', 'search')->name('search');
+    });
