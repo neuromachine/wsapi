@@ -30,7 +30,8 @@ class BlocksCategoriesSeeder extends Seeder
             [ 'id' => 14, 'key' => 'promotion', 'name' => 'Продвижение', 'description' => 'Категории маркетинговых и рекламных решений', 'parent_id' => 1, 'created_at' => now(), 'updated_at' => now(), ],
             [ 'id' => 15, 'key' => 'promotion_seo', 'name' => 'SEO и органический трафик', 'description' => 'Оптимизация сайта и рост органической видимости в поиске', 'parent_id' => 14, 'created_at' => now(), 'updated_at' => now(), ],
             [ 'id' => 16, 'key' => 'promotion_ads', 'name' => 'Контекстная реклама', 'description' => 'Привлечение клиентов через платные объявления в поисковых системах и соцсетях', 'parent_id' => 14, 'created_at' => now(), 'updated_at' => now(), ],
-            [ 'id' => 17, 'key' => 'promotion_smm', 'name' => 'SMM и контент', 'description' => 'Развитие присутствия компании в соцсетях, блогах и на медийных площадках', 'parent_id' => 14, 'created_at' => now(), 'updated_at' => now(), ]
+            [ 'id' => 17, 'key' => 'promotion_smm', 'name' => 'SMM и контент', 'description' => 'Развитие присутствия компании в соцсетях, блогах и на медийных площадках', 'parent_id' => 14, 'created_at' => now(), 'updated_at' => now(), ],
+            [ 'id' => 100, 'key' => 'portfolio', 'name' => 'Портфолио', 'description' => 'Наши работы', 'parent_id' => 1, 'created_at' => now(), 'updated_at' => now(), ]
         ]);
     }
 }
