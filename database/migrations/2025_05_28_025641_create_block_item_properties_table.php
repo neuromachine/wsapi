@@ -16,7 +16,8 @@ return new class extends Migration
             $table->unsignedBigInteger('block_id');
             $table->foreign('block_id')->references('id')->on('blocks')->onDelete('cascade');
 
-            $table->string('key')->unique();
+            //$table->string('key')->unique();
+            $table->string('key');
             $table->string('name');
             $table->string('type'); // Тип данных: string, number, bool, enum и т.д.
 

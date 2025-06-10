@@ -17,8 +17,11 @@ class BlockCategoryRepository
     }
 
 
-    public function getCategoryWithStructureBySlug(string $key)
+    public function getCategory(string $key)
     {
+
+        dd(BlocksCategories::where('key', $key)->firstOrFail());
+
         return BlocksCategories::where('key', $key)->firstOrFail();
 
         // 2) Загружаем связанные блоки, их свойства и элементы.

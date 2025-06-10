@@ -24,7 +24,7 @@ class BlockCategoryController extends Controller
 
     public function index(string $slug)
     {
-        return new BlockCategoryResource($this->repo->getCategoryWithStructureBySlug($slug));
+        return new BlockCategoryResource($this->repo->getCategory($slug));
     }
 
     public function structure(?string $slug = null)
