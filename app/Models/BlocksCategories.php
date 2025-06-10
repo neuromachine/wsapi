@@ -16,6 +16,14 @@ class BlocksCategories extends Model
         return $this->hasMany(self::class, 'parent_id');
     }
 
+//    //TODO: Рефакторинг children и childrenRecursive
+//    public function childrenRecursive()
+//    {
+//        return $this->hasMany(self::class, 'parent_id')
+//            ->with('childrenRecursive');
+//    }
+
+
     public function childrenRecursive()
     {
         return $this->children()->with('childrenRecursive');

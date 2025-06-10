@@ -16,11 +16,12 @@ class BlockPropertyResource extends JsonResource
     {
         return [
             'id'     => $this->id,
+            'key'     => $this->key,
             'name'   => $this->name,
-            'label'  => $this->label,
             'type'   => $this->type,
-            'order'  => $this->order,
-            'default'=> $this->default,
+            'is_required'   => $this->is_required,
+            'is_collection'   => $this->is_collection,
+            'is_unique'   => $this->is_unique,
         ];
     }
 }

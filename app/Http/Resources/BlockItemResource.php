@@ -7,11 +7,6 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class BlockItemResource extends JsonResource
 {
-    /**
-     * Transform the resource into an array.
-     *
-     * @return array<string, mixed>
-     */
     public function toArray(Request $request): array
     {
         /**/
@@ -23,8 +18,21 @@ class BlockItemResource extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
+            // общие поля позиции
+            'block' => new BlockResource(
+                $this->whenLoaded('block')
+            ),
+
+
             'properties' => $properties,
+
+
             // добавь при необходимости: 'created_at', 'key', и т.д.
+
+//            // реальные значения свойств этой позиции TODO: разобраться в предложенных подходах (см. $properties)
+//            'property_values' => ItemPropertyValueResource::collection(
+//                $this->whenLoaded('propertyValues')
+//            ),
         ];
 
 

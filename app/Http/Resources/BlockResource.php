@@ -7,24 +7,33 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class BlockResource extends JsonResource
 {
-    /**
-     * Transform the resource into an array.
-     *
-     * @return array<string, mixed>
-     */
     public function toArray($request): array
     {
-        return [
-            'id'          => $this->id,
-            'slug'        => $this->slug,
-            'name'        => $this->name,
-            'position'    => $this->position,
-            'properties'  => BlockPropertyResource::collection(
-                $this->whenLoaded('properties')
-            ),
-            'items'       => BlockItemResource::collection(
-                $this->whenLoaded('items')
-            ),
-        ];
+
+        return array_merge(
+            $this->attributesToArray(),
+            [
+                'properties'  => BlockPropertyResource::collection(
+                    $this->whenLoaded('properties')
+                ),
+                'items'       => BlockItemResource::collection(
+                    $this->whenLoaded('items')
+                ),
+            ]
+        );
+
+//        return [
+//            'id'          => $this->id,
+//            'key'        => $this->key,
+//            'name'        => $this->name,
+//            'position'    => $this->position,
+//            'properties'  => BlockPropertyResource::collection(
+//                $this->whenLoaded('properties')
+//            ),
+//            // TODO: проверить использование , возможно legacy
+//            'items'       => BlockItemResource::collection(
+//                $this->whenLoaded('items')
+//            ),
+//        ];
     }
 }

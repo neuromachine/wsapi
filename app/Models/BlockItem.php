@@ -13,12 +13,20 @@ class BlockItem extends Model
 
     public function block()
     {
-        return $this->belongsTo(Block::class);
+        return $this->belongsTo(Block::class, 'block_id');
     }
 
+    public function properties()
+    {
+        return $this->hasMany(BlockItemPropertyValue::class, 'item_id')
+            ->with('property');
+    }
+
+    // TODO: а где метод для ->with('property')?
     public function propertyValues()
     {
-        return $this->hasMany(BlockItemPropertyValue::class, 'item_id');
+        return $this->hasMany(BlockItemPropertyValue::class, 'item_id')
+            ->with('property');
     }
 
 }
