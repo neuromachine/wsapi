@@ -20,9 +20,9 @@ class BlockItemResource extends JsonResource
             'name' => $this->name,
             'properties' => $properties,
             // общие поля позиции
-            'block' => new BlockResource(
-                $this->whenLoaded('block')
-            ),
+//            'block' => new BlockResource(
+//                $this->whenLoaded('block')
+//            ),
 
 
             // добавь при необходимости: 'created_at', 'key', и т.д.

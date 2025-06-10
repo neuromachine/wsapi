@@ -29,7 +29,20 @@ class BlocksCategories extends Model
         return $this->children()->with('childrenRecursive');
     }
 
-    public function blocks() {
-        return $this->hasMany(Block::class, 'category_id');
+//    public function blocks() {
+//        return $this->hasMany(Block::class, 'category_id');
+//    }
+
+    public function blocks()
+    {
+        return $this->hasManyThrough(
+            Block::class,        // конечная модель
+            BlockItem::class,     // промежуточная
+            'category_id',        // FK в block_items → blocks_categories.id
+            'id',                 // PK в blocks → связан через block_items.block_id
+            'id',                 // PK этой модели (blocks_categories.id)
+            'block_id'            // FK в block_items → blocks.id
+        )->distinct();
     }
+
 }

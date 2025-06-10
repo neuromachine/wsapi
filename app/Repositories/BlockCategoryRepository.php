@@ -23,8 +23,10 @@ class BlockCategoryRepository
         return BlocksCategories::with(
                 [
                     'childrenRecursive',             // вложенные категории
-                    'items.block.properties',        // у каждой позиции её тип + описание полей
-                    'items.propertyValues.property', // сами значения + метаданные поля
+                    'blocks.properties',
+                    'blocks.items.propertyValues.property',
+//                    'items.block.properties',        // у каждой позиции её тип + описание полей
+//                    'items.propertyValues.property', // сами значения + метаданные поля
                 ]
             )
             ->where('key', $key)
