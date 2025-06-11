@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\DictionaryController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ItemController;
 use \App\Http\Controllers\Api\BlockCategoryController;
+use \App\Http\Controllers\Api\BlockController;
 
 Route::get('/test', function () {
     $users = DB::table('users')->get();
@@ -49,4 +50,12 @@ Route::prefix('blocks/categories')
 
         // Универсальный маршрут с GET-параметрами
         Route::get('search', 'search')->name('search');
+    });
+
+
+Route::prefix('blocks/blocks')
+    ->controller(BlockController::class)
+    ->name('blocks.blocks.')
+    ->group(function () {
+        Route::get('{slug}', 'index')->name('index');
     });
