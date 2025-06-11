@@ -18,8 +18,6 @@ class BlockController extends Controller
 
     public function index(string $slug)
     {
-        //return dd($this->repo->getBlock($slug));
-
         return new BlockResource(
             $this->repo->getBlock($slug)
         );
