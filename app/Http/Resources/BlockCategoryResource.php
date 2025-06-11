@@ -23,8 +23,7 @@ class BlockCategoryResource extends JsonResource
                 'children' => BlockCategoryResource::collection(
                     $this->whenLoaded('childrenRecursive')
                 ),
-
-                // позиции (items) в категории
+//                // позиции (items) в категории TODO: оставлено для вариативного использования см. репозиторий (нужно загрузить данные при возможном использовании)
 //                'items'    => BlockItemResource::collection(
 //                    $this->whenLoaded('items')
 //                ),

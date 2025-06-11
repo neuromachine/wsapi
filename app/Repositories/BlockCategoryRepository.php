@@ -25,6 +25,7 @@ class BlockCategoryRepository
                     'childrenRecursive',             // вложенные категории
                     'blocks.properties',
                     'blocks.items.propertyValues.property',
+                    //TODO: оставлено для вариативного использования см. BlockCategoryResource.php (нужно загрузить данные при возможном использовании)
 //                    'items.block.properties',        // у каждой позиции её тип + описание полей
 //                    'items.propertyValues.property', // сами значения + метаданные поля
                 ]
