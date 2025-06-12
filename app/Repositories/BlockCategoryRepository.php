@@ -11,9 +11,9 @@ class BlockCategoryRepository
     {
         if($key)
         {
-            return BlocksCategories::where('key', $key)->with('childrenRecursive')->get();
+            return BlocksCategories::where('key', $key)->with('childrenRecursive')->firstOrFail();
         }
-        return BlocksCategories::with('childrenRecursive')->whereNull('parent_id')->get();
+        return BlocksCategories::with('childrenRecursive')->whereNull('parent_id')->firstOrFail();
     }
 
 

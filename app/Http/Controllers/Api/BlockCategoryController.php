@@ -33,7 +33,7 @@ class BlockCategoryController extends Controller
 
     public function structure(?string $slug = null)
     {
-        return BlockCategoryStructureResource::collection($this->repo->getCategoriesRecursive($slug));
+        return new BlockCategoryStructureResource($this->repo->getCategoriesRecursive($slug));
     }
 
     public function offers(string $slug)
