@@ -14,7 +14,7 @@ class BlocksCategoriesSeeder extends Seeder
         DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 
         DB::table('blocks_categories')->insert([
-            [ 'id' => 1, 'key' => 'root', 'name' => 'Категории', 'description' => 'Корневая категория для всех блоков', 'parent_id' => null, 'created_at' => now(), 'updated_at' => now(), ],
+            [ 'id' => 1, 'key' => 'services', 'name' => 'Услуги', 'description' => 'Услуги WS', 'parent_id' => null, 'created_at' => now(), 'updated_at' => now(), ],
             [ 'id' => 2, 'key' => 'development', 'name' => 'Разработка', 'description' => 'Категории решений для веб-разработки', 'parent_id' => 1, 'created_at' => now(), 'updated_at' => now(), ],
             [ 'id' => 3, 'key' => 'development_basic', 'name' => 'Базовые решения', 'description' => 'Типовые форматы сайтов для бизнеса', 'parent_id' => 2, 'created_at' => now(), 'updated_at' => now(), ],
             [ 'id' => 4, 'key' => 'development_basic_landing', 'name' => 'Посадочная страница', 'description' => 'Одностраничный сайт для привлечения клиентов с конкретным предложением или акцией.', 'parent_id' => 3, 'created_at' => now(), 'updated_at' => now(), ],
