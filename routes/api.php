@@ -6,6 +6,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ItemController;
 use \App\Http\Controllers\Api\BlockCategoryController;
 use \App\Http\Controllers\Api\BlockController;
+use \App\Http\Controllers\Api\BlockItemController;
 
 Route::get('/test', function () {
     $users = DB::table('users')->get();
@@ -29,18 +30,21 @@ Route::get('/cat/{slug}', [CategoryController::class, 'show']);
 
 #Route::get('block-categories/{slug}/structure', [BlockCategoryController::class, 'structure']);
 
-
+Route::prefix('blocks/blocks')
+    ->controller(BlockController::class)
+    ->name('blocks.blocks.')
+    ->group(function () {
+        Route::get('{slug}', 'index')->name('index');
+    });
 
 Route::prefix('blocks/categories')
     ->controller(BlockCategoryController::class)
     ->name('blocks.categories.')
     ->group(function () {
-
         Route::get('{slug}', 'index')->name('index');
         Route::get('structure/{slug?}', 'structure')->name('structure');
         Route::get('offers/{slug}', 'offers')->name('offers');
-
-
+/*
         // Корневые действия без идентификатора
         Route::get('structure', 'rootStructure')->name('structure.root');
         Route::get('create', 'create')->name('create');
@@ -50,12 +54,12 @@ Route::prefix('blocks/categories')
 
         // Универсальный маршрут с GET-параметрами
         Route::get('search', 'search')->name('search');
+        */
     });
 
-
-Route::prefix('blocks/blocks')
-    ->controller(BlockController::class)
-    ->name('blocks.blocks.')
+Route::prefix('blocks/items')
+    ->controller(BlockItemController::class)
+    ->name('blocks.items.')
     ->group(function () {
         Route::get('{slug}', 'index')->name('index');
     });
