@@ -2,47 +2,23 @@
 
 namespace App\Http\Resources;
 
-use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class BlockItemResource extends JsonResource
 {
-    public function toArray(Request $request): array
+    public function toArray($request)
     {
-        /**/
-        $properties = $this->propertyValues->mapWithKeys(function ($val) {
-            return [$val->property->key => $val->value];
-        });
-
-
         return [
-            'id' => $this->id,
-            'key' => $this->key,
+            'id'   => $this->id,
+            'key'  => $this->key,
             'name' => $this->name,
-            'properties' => $properties,
-            // общие поля позиции
-//            'block' => new BlockResource(
-//                $this->whenLoaded('block')
-//            ),
 
-
-            // добавь при необходимости: 'created_at', 'key', и т.д.
-
-//            // реальные значения свойств этой позиции TODO: разобраться в предложенных подходах (см. $properties)
-//            'property_values' => ItemPropertyValueResource::collection(
-//                $this->whenLoaded('propertyValues')
-//            ),
+            'properties' => $this->propertyValues
+                ->groupBy(fn($v) => $v->property->key)
+                ->mapWithKeys(function ($group, $key) {
+                    $values = $group->pluck('value')->all();
+                    return [$key => count($values) === 1 ? $values[0] : $values];
+                }),
         ];
-
-
-/*        return [
-            'id'         => $this->id,
-            'block_id'   => $this->block_id,
-            'position'   => $this->position,
-            'visible'    => $this->visible,
-            'properties' => BlockItemPropertyResource::collection(
-                $this->whenLoaded('itemProperties')
-            ),
-        ];*/
     }
 }

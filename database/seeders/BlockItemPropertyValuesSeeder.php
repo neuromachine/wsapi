@@ -41,6 +41,7 @@ class BlockItemPropertyValuesSeeder extends Seeder
                 ['id' => 15, 'item_id' => 500, 'property_id' => 24, 'value' => '<p>Интернет магазин крупнейшего в ЮФО поставщика шин и дисков для бизнеса</p>'],
                 ['id' => 16, 'item_id' => 500, 'property_id' => 25, 'value' => 'thumb_tyres.png'],
                 ['id' => 17, 'item_id' => 500, 'property_id' => 26, 'value' => 'tyres/desctop_main.png'],
+                ['id' => 18, 'item_id' => 500, 'property_id' => 26, 'value' => 'tyres/desctop_catalog.png'],
             ]
         );
 
