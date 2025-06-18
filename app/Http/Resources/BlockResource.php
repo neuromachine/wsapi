@@ -21,19 +21,5 @@ class BlockResource extends JsonResource
                 ),
             ]
         );
-
-//        return [
-//            'id'          => $this->id,
-//            'key'        => $this->key,
-//            'name'        => $this->name,
-//            'position'    => $this->position,
-//            'properties'  => BlockPropertyResource::collection(
-//                $this->whenLoaded('properties')
-//            ),
-//            // TODO: проверить использование , возможно legacy
-//            'items'       => BlockItemResource::collection(
-//                $this->whenLoaded('items')
-//            ),
-//        ];
     }
 }
