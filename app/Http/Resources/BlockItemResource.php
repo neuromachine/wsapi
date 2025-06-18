@@ -16,7 +16,17 @@ class BlockItemResource extends JsonResource
             'properties' => $this->propertyValues
                 ->groupBy(fn($v) => $v->property->key)
                 ->mapWithKeys(function ($group, $key) {
-                    $values = $group->pluck('value')->all();
+                    $type = $group->first()->property->type;
+                    $raw  = $group->pluck('value')->all();
+
+                    if ($type === 'json') {
+                        // декодируем JSON-данные из value
+                        $decoded = array_map(fn($v) => json_decode($v, true), $raw);
+                        return [$key => count($decoded) === 1 ? $decoded[0] : $decoded];
+                    }
+
+                    // обычные строковые значения или файлы
+                    $values = $raw;
                     return [$key => count($values) === 1 ? $values[0] : $values];
                 }),
         ];
