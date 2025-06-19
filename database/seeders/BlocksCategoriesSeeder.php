@@ -29,7 +29,7 @@ class BlocksCategoriesSeeder extends Seeder
         ]);
 
         // Загружаем JSON с категориями
-        $jsonPath = storage_path('app/services_v0.2.json');
+        $jsonPath = storage_path('app/tree.json');
         $data = json_decode(file_get_contents($jsonPath), true);
 
         $id = 2;
@@ -102,5 +102,9 @@ class BlocksCategoriesSeeder extends Seeder
 
         // Вставляем все категории
         DB::table('blocks_categories')->insert($categories);
+
+        DB::table('blocks_categories')->insert([
+            [ 'id' => 100, 'key' => 'portfolio', 'name' => 'Портфолио', 'description' => 'Наши работы', 'parent_id' => 1, 'created_at' => now(), 'updated_at' => now(), ]
+        ]);
     }
 }
