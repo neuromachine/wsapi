@@ -15,7 +15,6 @@ class BlockItemPropertyValuesSeeder extends Seeder
         DB::table('block_item_property_values')->delete();
         DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 
-        // Настройка позиций (item_id, key, name)
         $items = [
             [500, 'shincenter', 'Шинцентр.рф'],
             [501, 'rayaray', 'RayaRay'],
@@ -31,55 +30,61 @@ class BlockItemPropertyValuesSeeder extends Seeder
             [511, 'brutality', 'BrutalityGame'],
         ];
 
-        // Свойства блока (property_id => генератор значения)
-        $generators = [
-            20 => fn($k) => "{$k}", // title
-            21 => fn($k) => "https://{$k}.example.com", // url
-            22 => fn($k) => "Краткое описание для {$k}", // descr
-            23 => fn($k) => BlockContentHelper::getContentFromJson($k), // content
-            24 => fn($k) => "thumb_{$k}.png", // thumb
-            25 => fn($k) => [
-                "{$k}/desktop_main.png",
-                "{$k}/desktop_1.png",
-                "{$k}/desktop_2.png",
-            ], // images
-            26 => fn($k) => json_encode([['key' => 'develop', 'label' => 'Разработка']]), // workclass
-        ];
-
         $rows = [];
         $id = 101;
 
         foreach ($items as [$itemId, $key, $name]) {
-            // комментарий для визуализации
             $rows[] = ['comment' => "// {$itemId} // {$key}, // {$name}"];
 
-            foreach ($generators as $pid => $gen) {
-                $value = $gen($key);
-                if (is_array($value)) {
-                    foreach ($value as $val) {
-                        $rows[] = [
-                            'id' => $id++,
-                            'item_id' => $itemId,
-                            'property_id' => $pid,
-                            'value' => $val,
-                            'created_at' => now(),
-                            'updated_at' => now(),
-                        ];
-                    }
-                } else {
-                    $rows[] = [
-                        'id' => $id++,
-                        'item_id' => $itemId,
-                        'property_id' => $pid,
-                        'value' => $value,
-                        'created_at' => now(),
-                        'updated_at' => now(),
-                    ];
-                }
+            $data = BlockContentHelper::getData($key);
+
+            $rows[] = [
+                'id' => $id++, 'item_id' => $itemId, 'property_id' => 20, // title
+                'value' => $data['title'], 'created_at' => now(), 'updated_at' => now()
+            ];
+
+            $rows[] = [
+                'id' => $id++, 'item_id' => $itemId, 'property_id' => 21, // url
+                'value' => $data['url'], 'created_at' => now(), 'updated_at' => now()
+            ];
+
+            $rows[] = [
+                'id' => $id++, 'item_id' => $itemId, 'property_id' => 22, // descr
+                'value' => $data['descr'], 'created_at' => now(), 'updated_at' => now()
+            ];
+
+            $rows[] = [
+                'id' => $id++, 'item_id' => $itemId, 'property_id' => 23, // content
+                'value' => $data['content']['head'] . $data['content']['body'] . $data['content']['footer'],
+                'created_at' => now(), 'updated_at' => now()
+            ];
+
+            $rows[] = [
+                'id' => $id++, 'item_id' => $itemId, 'property_id' => 24, // thumb
+                'value' => 'thumb_'.$key.'.png', 'created_at' => now(), 'updated_at' => now()
+            ];
+
+            foreach ($data['image'] as $imgIndex => $imagePath) {
+                $rows[] = [
+                    'id' => $id++, 'item_id' => $itemId, 'property_id' => 25, // images
+                    'value' => $key.'/'.$imagePath, 'created_at' => now(), 'updated_at' => now()
+                ];
             }
+
+            $rows[] = [
+                'id' => $id++, 'item_id' => $itemId, 'property_id' => 26, // workclass (static)
+                'value' => json_encode([['key' => 'develop', 'label' => 'Разработка']]),
+                'created_at' => now(), 'updated_at' => now()
+            ];
+
+/*            foreach ($data['files'] as $file) {
+                $rows[] = [
+                    'id' => $id++, 'item_id' => $itemId, 'property_id' => 27, // files
+                    'value' => json_encode($file), 'created_at' => now(), 'updated_at' => now()
+                ];
+            }*/
         }
 
-        // Фильтруем комментарии и формируем для вставки
         $insert = array_filter($rows, fn($r) => !isset($r['comment']));
 
         // Дополнительные статические значения (пример для позиций 1 и 2)
