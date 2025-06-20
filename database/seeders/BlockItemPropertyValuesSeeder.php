@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use Database\Seeders\Helpers\BlockContentHelper;
 
 class BlockItemPropertyValuesSeeder extends Seeder
 {
@@ -35,7 +36,7 @@ class BlockItemPropertyValuesSeeder extends Seeder
             20 => fn($k) => "{$k}", // title
             21 => fn($k) => "https://{$k}.example.com", // url
             22 => fn($k) => "Краткое описание для {$k}", // descr
-            23 => fn($k) => "<p>Полноценное описание для {$k}.</p>", // content
+            23 => fn($k) => BlockContentHelper::getContentFromJson($k), // content
             24 => fn($k) => "thumb_{$k}.png", // thumb
             25 => fn($k) => [
                 "{$k}/desktop_main.png",
@@ -81,7 +82,7 @@ class BlockItemPropertyValuesSeeder extends Seeder
         // Фильтруем комментарии и формируем для вставки
         $insert = array_filter($rows, fn($r) => !isset($r['comment']));
 
-// Дополнительные статические значения (пример для позиций 1 и 2)
+        // Дополнительные статические значения (пример для позиций 1 и 2)
         $manual = [
             // Старт (item_id = 1)
             ['id' => 1, 'item_id' => 1, 'property_id' => 1, 'value' => 'Стартовое предложение', 'created_at' => now(), 'updated_at' => now()],
@@ -99,12 +100,12 @@ class BlockItemPropertyValuesSeeder extends Seeder
             // Премиум (item_id = 2)
             ['id' => 50, 'item_id' => 2, 'property_id' => 1, 'value' => 'Премиум-решение', 'created_at' => now(), 'updated_at' => now()],
             ['id' => 51, 'item_id' => 2, 'property_id' => 2, 'value' => 'https://example.com/premium', 'created_at' => now(), 'updated_at' => now()],
-            ['id' => 52, 'item_id' => 2, 'property_id' => 3, 'value' => '45000', 'created_at' => now(), 'updated_at' => now()],
+            ['id' => 52, 'item_id' => 2, 'property_id' => 3, 'value' => '45000', 'created_at' =>now(), 'updated_at' => now()],
             ['id' => 53, 'item_id' => 2, 'property_id' => 4, 'value' => 'Максимум возможностей и глубокой кастомизации', 'created_at' => now(), 'updated_at' => now()],
             ['id' => 54, 'item_id' => 2, 'property_id' => 5, 'value' => '<p>Подходит для зрелого бизнеса с высокими требованиями.</p>', 'created_at' => now(), 'updated_at' => now()],
         ];
 
-// Объединяем автоматические и ручные записи
+        // Объединяем автоматические и ручные записи
         $insert = array_merge($insert, $manual);
 
         DB::table('block_item_property_values')->insert($insert);
