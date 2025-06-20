@@ -4,36 +4,82 @@ namespace Database\Seeders\Helpers;
 
 class BlockContentHelper
 {
-    public static function getContentFromJson(string $key): string
+    /**
+     * Возвращает массив данных блока по ключу из JSON-файла или заглушку.
+     *
+     * @param string $key
+     * @return array{
+     *     title: string,
+     *     price: string,
+     *     descr: string,
+     *     content: array{head: string, body: string, footer: string},
+     *     image: string[],
+     *     files: array<array{title: string, path: string}>
+     * }
+     */
+    public static function getData(string $key): array
     {
-        $jsonPath = storage_path('app/content.json');
+        $jsonPath = storage_path("app/blocks/{$key}.json");
 
-        // Отладочная информация: выводим путь, существование, содержимое файла и искомую запись
-        $raw = file_get_contents($jsonPath);
-        $decoded = json_decode($raw, true);
-        $exists = file_exists($jsonPath);
-
-        // Вывод дампа для диагностики
-        /*
-        dd([
-            'jsonPath' => $jsonPath,
-            'file_exists' => $exists,
-            'raw_content' => substr($raw, 0, 500), // первые 500 символов
-            'decoded_keys' => is_array($decoded) ? array_keys($decoded) : null,
-            'requested_key' => $key,
-            'found_content' => $decoded[$key]['content'] ?? null,
-        ]);
-        */
-
-        // Далее логика получения контента
         if (!file_exists($jsonPath)) {
-            return "<p>Контент не найден (файл отсутствует).</p>";
+            return self::stub($key, 'Файл не найден');
         }
 
-        if (!is_array($decoded)) {
-            return "<p>Контент не найден (ошибка формата JSON).</p>";
+        $raw = file_get_contents($jsonPath);
+        $data = json_decode($raw, true);
+
+        if (json_last_error() !== JSON_ERROR_NONE || !is_array($data)) {
+            return self::stub($key, 'Ошибка формата JSON');
         }
 
-        return $decoded[$key]['content'] ?? "<p>Контент не задан для {$key}.</p>";
+        return [
+            'title'   => $data['title'] ?? "Заголовок по умолчанию",
+            'price'   => $data['price'] ?? "0",
+            'descr'   => $data['descr'] ?? "Описание отсутствует",
+            'content' => [
+                'head'   => $data['content']['head'] ?? '<h1>Заглушка H1</h1>',
+                'body'   => $data['content']['body'] ?? '<p>Заглушка текста</p>',
+                'footer' => $data['content']['footer'] ?? '<footer>Конец</footer>',
+            ],
+            'image'   => is_array($data['image'] ?? null) ? $data['image'] : ['noimage1.png', 'noimage2.png'],
+            'files'   => is_array($data['files'] ?? null) ? $data['files'] : [
+                ['title' => 'Файл недоступен', 'path' => 'nofile1.pdf'],
+                ['title' => 'Файл отсутствует', 'path' => 'nofile2.pdf'],
+            ],
+        ];
+    }
+
+    /**
+     * Получение контентной части (body) для сидера
+     *
+     * @param string $key
+     * @return string
+     */
+    public static function getContent(string $key): string
+    {
+        $data = self::getData($key);
+        return $data['content']['body'];
+    }
+
+    /**
+     * Заглушка с причиной неуспеха
+     */
+    protected static function stub(string $key, string $reason): array
+    {
+        return [
+            'title'   => "Заглушка: {$key}",
+            'price'   => "0",
+            'descr'   => $reason,
+            'content' => [
+                'head'   => '<h1>Ошибка</h1>',
+                'body'   => "<p>{$reason}</p>",
+                'footer' => '<footer>Нет данных</footer>',
+            ],
+            'image'   => ['noimage1.png', 'noimage2.png'],
+            'files'   => [
+                ['title' => 'Файл недоступен', 'path' => 'nofile1.pdf'],
+                ['title' => 'Файл отсутствует', 'path' => 'nofile2.pdf'],
+            ],
+        ];
     }
 }
