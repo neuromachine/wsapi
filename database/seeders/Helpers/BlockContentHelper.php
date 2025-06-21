@@ -8,19 +8,19 @@ class BlockContentHelper
     {
         $defaults = [
             'title' => 'Заголовок по умолчанию',
-            'url' => '-',
+            'url' => 'http://ws-pro.ru/',
             'price' => '0',
-            'descr' => 'Описание отсутствует',
+            'descr' => 'краткое описание отсутствует',
             'content' => [
-                'head'   => '<h1>Заглушка H1</h1>',
-                'body'   => '<p>Заглушка текста</p>',
-                'footer' => '<footer>Конец</footer>',
+                'head'   => '<h1>Раздел в стадии наполнения</h1>',
+                'body'   => '<p>Мы обязательно позаботимся о подробном описании для этой позиции :)</p>',
+                'footer' => '<p>Предлагаем вам выбрать другую страницу для изучения:<br><a href="/portfolio">среди наших работ</a><br>или перейти<br><a>на главную</a></p>',
             ],
-            'image' => ['noimage1.png', 'noimage2.png'],
+            'image' => ['img_replacement.png'],
             'files' => [
-                ['title' => 'Файл недоступен', 'path' => 'nofile1.pdf'],
-                ['title' => 'Файл отсутствует', 'path' => 'nofile2.pdf'],
+                ['title' => 'Коммерческое предложение', 'path' => 'kp.pdf']
             ],
+            'date' => '-',
         ];
 
         $jsonPath = storage_path("app/blocks/{$key}.json");

@@ -83,6 +83,16 @@ class BlockItemPropertyValuesSeeder extends Seeder
                     'value' => json_encode($file), 'created_at' => now(), 'updated_at' => now()
                 ];
             }*/
+
+            $rows[] = [
+                'id' => $id++, 'item_id' => $itemId, 'property_id' => 27, // price
+                'value' => $data['price'], 'created_at' => now(), 'updated_at' => now()
+            ];
+
+            $rows[] = [
+                'id' => $id++, 'item_id' => $itemId, 'property_id' => 28, // date
+                'value' => $data['date'], 'created_at' => now(), 'updated_at' => now()
+            ];
         }
 
         $insert = array_filter($rows, fn($r) => !isset($r['comment']));
