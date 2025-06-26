@@ -43,4 +43,26 @@ class BlockContentHelper
     {
         return self::getData($key)['content']['body'];
     }
+
+    public static function getCatData(string $key): array
+    {
+        $defaults = [
+            'content' => '<p>Мы обязательно позаботимся о подробном описании для этой позиции :)</p>',
+        ];
+
+        $jsonPath = storage_path("app/blocks/cat/{$key}.json");
+        if (!file_exists($jsonPath)) {
+            $defaults['descr'] = "Файл {$key}.json не найден";
+            return $defaults;
+        }
+
+        $raw = file_get_contents($jsonPath);
+        $data = json_decode($raw, true);
+        if (json_last_error() !== JSON_ERROR_NONE || !is_array($data)) {
+            $defaults['descr'] = 'Ошибка формата JSON';
+            return $defaults;
+        }
+
+        return array_replace_recursive($defaults, $data);
+    }
 }

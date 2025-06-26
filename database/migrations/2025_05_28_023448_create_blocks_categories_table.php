@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('key')->unique();
             $table->string('name');
             $table->string('description')->nullable();
+            $table->longText('content')->nullable();
 
             $table->unsignedBigInteger('parent_id')->nullable();
             $table->foreign('parent_id')->references('id')->on('blocks_categories')->onDelete('cascade');

@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use Database\Seeders\Helpers\BlockContentHelper;
 
 class BlocksCategoriesSeeder extends Seeder
 {
@@ -22,6 +23,7 @@ class BlocksCategoriesSeeder extends Seeder
                 'key'        => 'services',
                 'name'       => 'Услуги',
                 'description'=> 'Услуги WS',
+                'content'=> '-',
                 'parent_id'  => null,
                 'created_at' => now(),
                 'updated_at' => now(),
@@ -59,6 +61,7 @@ class BlocksCategoriesSeeder extends Seeder
                 'key'        => $slug,
                 'name'       => $groupName,
                 'description'=> $groupValue['description'] ?? 'Раздел «'.$groupName.'»',
+                'content'=> '-',
                 'parent_id'  => 1,
                 'created_at' => now(),
                 'updated_at' => now(),
@@ -76,6 +79,7 @@ class BlocksCategoriesSeeder extends Seeder
                     'key'        => $subSlug,
                     'name'       => $subName,
                     'description'=> 'Подраздел «'.$subName.'» в «'.$groupName.'»',
+                    'content'=> '-',
                     'parent_id'  => $groupId,
                     'created_at' => now(),
                     'updated_at' => now(),
@@ -87,11 +91,13 @@ class BlocksCategoriesSeeder extends Seeder
                     $leafName = $leaf['название'];
                     $leafDesc = $leaf['описание'] ?? 'Описание отсутствует';
                     $leafSlug = $makeUniqueKey($leafName);
+                    $catData = BlockContentHelper::getCatData($leafSlug);
                     $categories[] = [
                         'id'         => $id++,
                         'key'        => $leafSlug,
                         'name'       => $leafName,
                         'description'=> $leafDesc,
+                        'content'=> $catData['content'],
                         'parent_id'  => $subId,
                         'created_at' => now(),
                         'updated_at' => now(),
@@ -104,7 +110,7 @@ class BlocksCategoriesSeeder extends Seeder
         DB::table('blocks_categories')->insert($categories);
 
         DB::table('blocks_categories')->insert([
-            [ 'id' => 100, 'key' => 'portfolio', 'name' => 'Портфолио', 'description' => 'Наши работы', 'parent_id' => 1, 'created_at' => now(), 'updated_at' => now(), ]
+            [ 'id' => 100, 'key' => 'portfolio', 'name' => 'Портфолио', 'description' => 'Наши работы', 'content' => '-', 'parent_id' => 1, 'created_at' => now(), 'updated_at' => now(), ]
         ]);
     }
 }

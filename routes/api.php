@@ -8,6 +8,8 @@ use \App\Http\Controllers\Api\BlockCategoryController;
 use \App\Http\Controllers\Api\BlockController;
 use \App\Http\Controllers\Api\BlockItemController;
 
+//sleep(3);
+
 Route::get('/test', function () {
     $users = DB::table('users')->get();
     return response()->json($users);
