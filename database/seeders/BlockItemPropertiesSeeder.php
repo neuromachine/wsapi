@@ -34,6 +34,7 @@ class BlockItemPropertiesSeeder extends Seeder
             ['id' => 26, 'block_id' => 2, 'key' => 'workclass', 'name' => 'Класс работ', 'type' => 'json', 'created_at' => now(), 'updated_at' => now()],
             ['id' => 27, 'block_id' => 2, 'key' => 'price', 'name' => 'Цена', 'type' => 'number', 'created_at' => now(), 'updated_at' => now()],
             ['id' => 28, 'block_id' => 2, 'key' => 'date', 'name' => 'Дата', 'type' => 'string', 'created_at' => now(), 'updated_at' => now()],
+            ['id' => 50, 'block_id' => 3, 'key' => 'content', 'name' => 'Контент (HTML)', 'type' => 'html', 'created_at' => now(), 'updated_at' => now()],
         ]);
     }
 }

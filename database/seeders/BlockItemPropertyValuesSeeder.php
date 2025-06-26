@@ -118,6 +118,9 @@ class BlockItemPropertyValuesSeeder extends Seeder
             ['id' => 52, 'item_id' => 2, 'property_id' => 3, 'value' => '45000', 'created_at' =>now(), 'updated_at' => now()],
             ['id' => 53, 'item_id' => 2, 'property_id' => 4, 'value' => 'Максимум возможностей и глубокой кастомизации', 'created_at' => now(), 'updated_at' => now()],
             ['id' => 54, 'item_id' => 2, 'property_id' => 5, 'value' => '<p>Подходит для зрелого бизнеса с высокими требованиями.</p>', 'created_at' => now(), 'updated_at' => now()],
+
+            ['id' => 10000, 'item_id' => 1000, 'property_id' => 50, 'value' => BlockContentHelper::getData('contacts')['content']['body'], 'created_at' => now(), 'updated_at' => now()],
+            ['id' => 10001, 'item_id' => 1001, 'property_id' => 50, 'value' => BlockContentHelper::getData('about')['content']['body'], 'created_at' => now(), 'updated_at' => now()],
         ];
 
         // Объединяем автоматические и ручные записи

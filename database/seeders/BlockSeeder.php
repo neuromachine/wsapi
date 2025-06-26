@@ -36,6 +36,14 @@ class BlockSeeder extends Seeder
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
+            [
+                'id' => 3,
+                'key' => 'pages',
+                'name' => 'Страницы',
+                'description' => 'Структурные элементы - страницы и т.п.',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
         ]);
     }
 }

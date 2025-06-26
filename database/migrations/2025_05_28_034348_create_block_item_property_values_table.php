@@ -25,7 +25,7 @@ return new class extends Migration
                 ->onDelete('cascade');
 
             // Само значение свойства
-            $table->text('value')->nullable();
+            $table->longText('value')->nullable();
 
             // Тип значения (если нужно кастовать, проверять, рендерить и т.п.)
             $table->string('value_type')->default('string'); // string, int, bool, json, file, ref, etc.
