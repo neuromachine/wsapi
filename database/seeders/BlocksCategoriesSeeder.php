@@ -56,12 +56,14 @@ class BlocksCategoriesSeeder extends Seeder
             $groupName = preg_replace('/^[\d\.\s]+/', '', $groupKey);
             $groupId = $id++;
             $slug = $makeUniqueKey($groupName);
+            $catDirData = BlockContentHelper::getCatData($slug);
             $categories[] = [
                 'id'         => $groupId,
                 'key'        => $slug,
                 'name'       => $groupName,
-                'description'=> $groupValue['description'] ?? 'Раздел «'.$groupName.'»',
-                'content'=> '-',
+//                'description'=> $groupValue['description'] ?? 'Раздел «'.$groupName.'»',
+                'description'=> $catDirData['descr'],
+                'content'=> $catDirData['content'],
                 'parent_id'  => 1,
                 'created_at' => now(),
                 'updated_at' => now(),
@@ -74,12 +76,13 @@ class BlocksCategoriesSeeder extends Seeder
                 $subName = preg_replace('/^[\d\.\s]+/', '', $subKey);
                 $subId = $id++;
                 $subSlug = $makeUniqueKey($subName);
+                $catClassData = BlockContentHelper::getCatData($subSlug);
                 $categories[] = [
                     'id'         => $subId,
                     'key'        => $subSlug,
                     'name'       => $subName,
-                    'description'=> 'Подраздел «'.$subName.'» в «'.$groupName.'»',
-                    'content'=> '-',
+                    'description'=> $catClassData['descr'],
+                    'content'=> $catClassData['content'],
                     'parent_id'  => $groupId,
                     'created_at' => now(),
                     'updated_at' => now(),
@@ -91,13 +94,13 @@ class BlocksCategoriesSeeder extends Seeder
                     $leafName = $leaf['название'];
                     $leafDesc = $leaf['описание'] ?? 'Описание отсутствует';
                     $leafSlug = $makeUniqueKey($leafName);
-                    $catData = BlockContentHelper::getCatData($leafSlug);
+                    $catGroupData = BlockContentHelper::getCatData($leafSlug);
                     $categories[] = [
                         'id'         => $id++,
                         'key'        => $leafSlug,
                         'name'       => $leafName,
                         'description'=> $leafDesc,
-                        'content'=> $catData['content'],
+                        'content'=> $catGroupData['content'],
                         'parent_id'  => $subId,
                         'created_at' => now(),
                         'updated_at' => now(),
@@ -110,8 +113,8 @@ class BlocksCategoriesSeeder extends Seeder
         DB::table('blocks_categories')->insert($categories);
 
         DB::table('blocks_categories')->insert([
-            [ 'id' => 100, 'key' => 'portfolio', 'name' => 'Портфолио', 'description' => 'Наши работы', 'content' => '-', 'parent_id' => 1, 'created_at' => now(), 'updated_at' => now(), ],
-            [ 'id' => 200, 'key' => 'pages', 'name' => 'ws-pro.ru', 'description' => 'Карта сайта', 'content' => '<ul><li><a href="/">Главная</a></li></ul>', 'parent_id' => 1, 'created_at' => now(), 'updated_at' => now(), ]
+            [ 'id' => 100, 'key' => 'portfolio', 'name' => 'Портфолио', 'description' => 'Наши работы', 'content' => '-', 'parent_id' => null, 'created_at' => now(), 'updated_at' => now(), ],
+            [ 'id' => 200, 'key' => 'pages', 'name' => 'ws-pro.ru', 'description' => 'Карта сайта', 'content' => '<ul><li><a href="/">Главная</a></li></ul>', 'parent_id' => null, 'created_at' => now(), 'updated_at' => now(), ]
         ]);
     }
 }

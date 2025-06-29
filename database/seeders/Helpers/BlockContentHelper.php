@@ -47,6 +47,7 @@ class BlockContentHelper
     public static function getCatData(string $key): array
     {
         $defaults = [
+            'descr' => 'Раздел в стадии наполнения',
             'content' => '<p>Мы обязательно позаботимся о подробном описании для этой позиции :)</p>',
         ];
 
