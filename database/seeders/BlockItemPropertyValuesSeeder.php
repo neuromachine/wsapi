@@ -98,7 +98,9 @@ class BlockItemPropertyValuesSeeder extends Seeder
         $insert = array_filter($rows, fn($r) => !isset($r['comment']));
 
         // Дополнительные статические значения (пример для позиций 1 и 2)
+        /**/
         $manual = [
+            /*
             // Старт (item_id = 1)
             ['id' => 1, 'item_id' => 1, 'property_id' => 1, 'value' => 'Стартовое предложение', 'created_at' => now(), 'updated_at' => now()],
             ['id' => 2, 'item_id' => 1, 'property_id' => 2, 'value' => 'https://example.com/start', 'created_at' => now(), 'updated_at' => now()],
@@ -119,12 +121,15 @@ class BlockItemPropertyValuesSeeder extends Seeder
             ['id' => 53, 'item_id' => 2, 'property_id' => 4, 'value' => 'Максимум возможностей и глубокой кастомизации', 'created_at' => now(), 'updated_at' => now()],
             ['id' => 54, 'item_id' => 2, 'property_id' => 5, 'value' => '<p>Подходит для зрелого бизнеса с высокими требованиями.</p>', 'created_at' => now(), 'updated_at' => now()],
 
+            */
+
             ['id' => 10000, 'item_id' => 1000, 'property_id' => 50, 'value' => BlockContentHelper::getData('contacts')['content']['body'], 'created_at' => now(), 'updated_at' => now()],
             ['id' => 10001, 'item_id' => 1001, 'property_id' => 50, 'value' => BlockContentHelper::getData('about')['content']['body'], 'created_at' => now(), 'updated_at' => now()],
         ];
 
         // Объединяем автоматические и ручные записи
         $insert = array_merge($insert, $manual);
+
 
         DB::table('block_item_property_values')->insert($insert);
     }

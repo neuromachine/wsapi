@@ -4,7 +4,6 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Schema;
 use Database\Seeders\Helpers\BlockContentHelper;
 use Illuminate\Support\Facades\Log;
 
@@ -12,73 +11,97 @@ class ServicesBlockSeeder extends Seeder
 {
     public function run(): void
     {
-        // В тех. целях — отключаем проверки FK
+        // Отключаем проверки FK, если нужно очистить существующие данные:
         DB::statement('SET FOREIGN_KEY_CHECKS=0;');
-        // Можно очистить предыдущие данные, если нужно
         // DB::table('block_items')->where('block_id', $blockId)->delete();
+        // DB::table('block_item_property_values')->whereIn('item_id', function($q) use ($blockId) {
+        //     $q->select('id')->from('block_items')->where('block_id', $blockId);
+        // })->delete();
         DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 
-        // Начинаем транзакцию
-        DB::transaction(function () {
-            // Ручной список категорий для обработки
+        // Получаем ID блока «Услуги» (предполагается, что key = 'services')
+        $block = DB::table('blocks')
+            ->where('key', 'offers')
+            ->first();
+
+        if (!$block) {
+            Log::error("Block with key 'services' not found, abort seeding ServicesBlockSeeder.");
+            return;
+        }
+
+        $blockId = $block->id;
+
+        DB::transaction(function () use ($blockId) {
+            // Фиксированный список категорий
             $categoryKeys = [
                 'posadocnaia-stranica',
-                // 'druzhba-sosedey', …
+                // 'druzhba-sosedey',
+                // … другие категории
             ];
 
             foreach ($categoryKeys as $catKey) {
+                // Забираем только ID категории
                 $cat = DB::table('blocks_categories')
                     ->where('key', $catKey)
-                    ->first();
+                    ->first(['id']);
 
                 if (!$cat) {
                     Log::warning("Категория {$catKey} не найдена — пропускаем");
                     continue;
                 }
 
-                // Получаем данные из JSON
+                $categoryId = $cat->id;
+
+                // Достаём JSON-данные
                 $data = BlockContentHelper::getCategoryItemsData($catKey);
                 $items = $data['items'] ?? [];
 
                 foreach ($items as $itemDef) {
-                    // Вставляем или обновляем позицию
-                    $itemId = DB::table('block_items')
+                    // Вставляем или обновляем запись в block_items
+                    DB::table('block_items')
                         ->updateOrInsert(
-                            ['block_id' => $cat->block_id, 'category_id' => $cat->id, 'key' => $itemDef['key']],
+                            [
+                                'block_id'    => $blockId,
+                                'category_id' => $categoryId,
+                                'key'         => $itemDef['key'],
+                            ],
                             [
                                 'name'       => $itemDef['name'],
-                                'slug'       => $itemDef['key'],
+                                'key'       => $itemDef['key'],
                                 'created_at' => now(),
                                 'updated_at' => now(),
                             ]
-                        ) ?
-                        DB::table('block_items')->where('block_id', $cat->block_id)->where('key', $itemDef['key'])->value('id')
-                        : null;
+                        );
+
+                    // Получаем ID только что вставленной (или существующей) позиции
+                    $itemId = DB::table('block_items')
+                        ->where('block_id', $blockId)
+                        ->where('key', $itemDef['key'])
+                        ->value('id');
 
                     if (!$itemId) {
-                        Log::error("Не удалось вставить item {$itemDef['key']} в категорию {$catKey}");
+                        Log::error("Не удалось получить ID item {$itemDef['key']} в категории {$catKey}");
                         continue;
                     }
 
-                    // Свойства
+                    // Проходим по свойствам позиции
                     $props = $itemDef['properties'] ?? [];
                     foreach ($props as $propKey => $propValue) {
-                        // Найдём property_id заранее заведённого свойства
                         $propertyId = DB::table('block_item_properties')
-                            ->where('block_id', $cat->block_id)
+                            ->where('block_id', $blockId)
                             ->where('key', $propKey)
                             ->value('id');
 
                         if (!$propertyId) {
-                            Log::warning("Свойство {$propKey} не найдено для блока {$cat->block_id}");
+                            Log::warning("Свойство {$propKey} не найдено для блока ID={$blockId}");
                             continue;
                         }
 
-                        // Вставка или обновление значения
                         DB::table('block_item_property_values')
                             ->updateOrInsert(
-                                ['item_id' => $itemId, 'property_id' => $propertyId],
-                                ['value' => is_array($propValue) ? json_encode($propValue) : $propValue,
+                                ['item_id'     => $itemId, 'property_id' => $propertyId],
+                                [
+                                    'value'      => is_array($propValue) ? json_encode($propValue) : $propValue,
                                     'created_at' => now(),
                                     'updated_at' => now(),
                                 ]
