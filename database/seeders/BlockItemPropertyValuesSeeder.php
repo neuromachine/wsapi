@@ -125,6 +125,7 @@ class BlockItemPropertyValuesSeeder extends Seeder
 
             ['id' => 10000, 'item_id' => 1000, 'property_id' => 50, 'value' => BlockContentHelper::getData('contacts')['content']['body'], 'created_at' => now(), 'updated_at' => now()],
             ['id' => 10001, 'item_id' => 1001, 'property_id' => 50, 'value' => BlockContentHelper::getData('about')['content']['body'], 'created_at' => now(), 'updated_at' => now()],
+            ['id' => 10002, 'item_id' => 1002, 'property_id' => 50, 'value' => BlockContentHelper::getData('price')['content']['body'], 'created_at' => now(), 'updated_at' => now()],
         ];
 
         // Объединяем автоматические и ручные записи
