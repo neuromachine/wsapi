@@ -35,6 +35,7 @@ class ServicesBlockSeeder extends Seeder
             // Фиксированный список категорий
             $categoryKeys = [
                 'posadocnaia-stranica',
+                'korporativnyi-sait',
                 // 'druzhba-sosedey',
                 // … другие категории
             ];
