@@ -13,11 +13,25 @@ class BlockCategoryResource extends JsonResource
             $this->attributesToArray(),
 
             [
-                'blocks' => BlockResource::collection(
+/*                'blocks' => BlockResource::collection(
                     $this->whenLoaded('blocks')
+                ),*/
+
+                // Фильтруем items внутри каждого блока по текущей категории:
+                'blocks' => BlockResource::collection(
+                    $this->whenLoaded('blocks', function () {
+                        return $this->blocks->map(function ($block) {
+                            $filteredItems = $block
+                                ->itemsForCategory($this->id)
+                                ->get();
+
+                            $block->setRelation('items', $filteredItems);
+
+                            return $block;
+                        });
+                    })
                 ),
 
-//                'blocks' => 'test',
 
                 // рекурсивные под‑категории TODO: проверить на категориях у кот. есть вложенные!
                 'children' => BlockCategoryResource::collection(

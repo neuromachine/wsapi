@@ -36,7 +36,15 @@ class ServicesBlockSeeder extends Seeder
             $categoryKeys = [
                 'posadocnaia-stranica',
                 'korporativnyi-sait',
-                // 'druzhba-sosedey',
+                'internet-katalog',
+                'internet-magazin',
+                'posadocnaia-stranica-1',
+                'korporativnyi-sait-1',
+                'internet-katalog-1',
+                'internet-magazin-1',
+                'marketingovaia-platforma',
+                'portal-socialnaia-set',
+                'saas-servis-veb-prilozenie',
                 // … другие категории
             ];
 

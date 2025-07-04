@@ -15,4 +15,9 @@ class Block extends Model
     {
         return $this->hasMany(BlockItem::class, 'block_id')->with('properties.property');
     }
+
+    public function itemsForCategory($categoryId)
+    {
+        return $this->hasMany(BlockItem::class, 'block_id')->with('properties.property')->where('category_id', $categoryId);;
+    }
 }
