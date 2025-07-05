@@ -114,7 +114,8 @@ class BlocksCategoriesSeeder extends Seeder
 
         DB::table('blocks_categories')->insert([
             [ 'id' => 100, 'key' => 'portfolio', 'name' => 'Портфолио', 'description' => 'Наши работы', 'content' => '-', 'parent_id' => null, 'created_at' => now(), 'updated_at' => now(), ],
-            [ 'id' => 200, 'key' => 'pages', 'name' => 'ws-pro.ru', 'description' => 'Карта сайта', 'content' => '<ul><li><a href="/">Главная</a></li></ul>', 'parent_id' => null, 'created_at' => now(), 'updated_at' => now(), ]
+            [ 'id' => 200, 'key' => 'pages', 'name' => 'ws-pro.ru', 'description' => 'Карта сайта', 'content' => '<ul><li><a href="/">Главная</a></li></ul>', 'parent_id' => null, 'created_at' => now(), 'updated_at' => now(), ],
+            [ 'id' => 300, 'key' => 'kp', 'name' => 'Ком.предложения', 'description' => 'КП - для вас', 'content' => '-', 'parent_id' => null, 'created_at' => now(), 'updated_at' => now(), ]
         ]);
     }
 }

@@ -22,6 +22,7 @@ class DatabaseSeeder extends Seeder
             BlockItemsSeeder::class,
             BlockItemPropertyValuesSeeder::class,
             ServicesBlockSeeder::class,
+            KpBlockSeeder::class,
         ]);
 
 /*        User::factory()->create([

@@ -44,6 +44,14 @@ class BlockSeeder extends Seeder
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
+            [
+                'id' => 4,
+                'key' => 'kp',
+                'name' => 'Коммерческие предложения',
+                'description' => 'КП для разных секторов',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
         ]);
     }
 }
