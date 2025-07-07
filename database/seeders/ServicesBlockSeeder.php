@@ -45,6 +45,16 @@ class ServicesBlockSeeder extends Seeder
                 'marketingovaia-platforma',
                 'portal-socialnaia-set',
                 'saas-servis-veb-prilozenie',
+
+                'integraciia-s-crm-amo-bitrix24-i-dr',
+                'individualnye-backend-reseniia-laravel-nodejs-i-pr',
+                'integracii-s-plateznymi-sistemami-api-1s',
+                'avtomatizaciia-biznes-processov',
+
+                'proektirovanie-interfeisov',
+                'adaptivnyi-dizain',
+                'dizain-koncepcii-i-brendbuk',
+                'mobilnaia-versiia-pwa',
                 // … другие категории
             ];
 
