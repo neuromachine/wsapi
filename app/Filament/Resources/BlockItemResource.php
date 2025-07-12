@@ -12,6 +12,7 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Filament\Forms\Components\Select;
 
 class BlockItemResource extends Resource
 {
@@ -36,6 +37,9 @@ class BlockItemResource extends Resource
                     ->maxLength(255),
                 Forms\Components\TextInput::make('description')
                     ->maxLength(255),
+                Select::make('block_id') // Имя колонки внешнего ключа
+                ->relationship('block', 'name') // 'block' - имя метода отношения в BlockItem модели, 'name' - поле из Block для отображения
+                ->required(), // Если BlockItem всегда должен принадлежать Block
             ]);
     }
 
@@ -63,6 +67,9 @@ class BlockItemResource extends Resource
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('block.name') // Отображаем имя связанного блока в таблице BlockItems
+                ->sortable()
+                    ->searchable(),
             ])
             ->filters([
                 //
