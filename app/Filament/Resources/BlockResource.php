@@ -12,6 +12,10 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Filament\Resources\RelationManagers\RelationManager;
+use App\Filament\Resources\BlockResource\RelationManagers\ItemsRelationManager; // Импорт созданного RelationManager
+
+
 
 class BlockResource extends Resource
 {
@@ -69,7 +73,7 @@ class BlockResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            ItemsRelationManager::class,
         ];
     }
 

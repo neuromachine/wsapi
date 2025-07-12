@@ -37,9 +37,10 @@ class BlockItemResource extends Resource
                     ->maxLength(255),
                 Forms\Components\TextInput::make('description')
                     ->maxLength(255),
-                Select::make('block_id') // Имя колонки внешнего ключа
-                ->relationship('block', 'name') // 'block' - имя метода отношения в BlockItem модели, 'name' - поле из Block для отображения
-                ->required(), // Если BlockItem всегда должен принадлежать Block
+                Select::make('block_id') // внешний ключ
+                ->relationship('block', 'name') // 'block' - метод отношения в BlockItem модели, 'name' - поле для отображения из Block
+                ->required()
+                ->label('Родительский Блок'),
             ]);
     }
 
