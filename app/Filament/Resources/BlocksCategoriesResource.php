@@ -3,7 +3,6 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\BlocksCategoriesResource\Pages;
-use App\Filament\Resources\BlocksCategoriesResource\RelationManagers;
 use App\Models\BlocksCategories;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -12,6 +11,8 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Filament\Resources\RelationManagers\RelationManager;
+use App\Filament\Resources\BlockResource\RelationManagers\ItemsRelationManager;
 
 class BlocksCategoriesResource extends Resource
 {
@@ -76,7 +77,7 @@ class BlocksCategoriesResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            ItemsRelationManager::class,
         ];
     }
 
