@@ -43,15 +43,27 @@ class BlocksCategoriesResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('key')
-                    ->searchable(),
                 Tables\Columns\TextColumn::make('name')
+                    ->searchable()
+                    ->label('Название'),
+                Tables\Columns\TextColumn::make('key')
+                    ->label('Ключь')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('description')
-                    ->searchable(),
+
+                /*
+                // Добавляем колонку для отображения родительской категории
+                Tables\Columns\TextColumn::make('childrenRecursive.name') // parent - это метод отношения в вашей модели BlocksCategories (belongsTo)
+                ->searchable()
+                    ->sortable()
+                    ->label('Родительская категория')
+                    ->placeholder('Корневая категория'), // Если нет родителя
+                */
+
+//                Tables\Columns\TextColumn::make('description')
+//                    ->searchable(),
                 Tables\Columns\TextColumn::make('parent_id')
                     ->numeric()
-                    ->sortable(),
+                    ->label('Влад-ц'),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
