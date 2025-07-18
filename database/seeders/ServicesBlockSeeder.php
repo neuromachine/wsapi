@@ -55,6 +55,59 @@ class ServicesBlockSeeder extends Seeder
                 'adaptivnyi-dizain',
                 'dizain-koncepcii-i-brendbuk',
                 'mobilnaia-versiia-pwa',
+
+                'audit-i-semanticeskoe-iadro',
+                'vnutrenniaia-i-vnesniaia-optimizaciia',
+                'prodvizenie-po-trafiku-i-poziciiam',
+
+                'google-ads-iandeksdirekt',
+                'retargeting-i-dinamiceskie-kampanii',
+                'mediinaia-i-bannernaia-reklama',
+
+                //Социальные сети и контент
+                'smm-instagram-vk-telegram-i-dr',
+                'targetirovannaia-reklama',
+                'kontent-strategiia-i-vedenie-akkauntov',
+
+                //Email- и мессенджер-маркетинг
+                'podpisnye-voronki',
+                'avtomatizaciia-rassylok',
+                'personalizirovannye-cepocki',
+
+                //Брендинг и PR
+                'sozdanie-utp-i-pozicionirovanie',
+                'rabota-s-otzyvami-reputaciei',
+                'publikacii-i-stati-v-smi',
+
+                //Поддержка и сопровождение
+
+                //Техническая поддержка
+                'obnovleniia-i-bekapy',
+                'monitoring-dostupnosti',
+                'zashhita-i-bezopasnost',
+
+                //Аналитика и A/B тесты
+                'analitika-i-ab-testy',
+                'optimizaciia-skorosti-i-ux',
+                'ulucsenie-konversii',
+
+                //Внедрение новых функций
+                'novye-moduli-i-stranicy',
+                'integracii-dopolnitelnyx-servisov',
+                'migraciia-na-novye-texnologii',
+
+                //Контент и креатив
+
+                //Копирайтинг и редактура
+                'seo-teksty-opisaniia-tovarov',
+                'napolnenie-blogov-statei',
+                'ux-i-texnicnyi-kopiraiting',
+
+                //Видеопродакшн
+                'promo-i-korporativnoe-video',
+                'video-dlia-socsetei-reels',
+
+
                 // … другие категории
             ];
 

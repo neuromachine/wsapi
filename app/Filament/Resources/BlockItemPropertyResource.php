@@ -17,8 +17,9 @@ use Filament\Forms\Components;
 class BlockItemPropertyResource extends Resource
 {
     protected static ?string $model = BlockItemProperty::class;
-
+    protected static ?string $navigationLabel = 'Свойства';
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?int $navigationSort = 4;
 
     public static function form(Form $form): Form
     {

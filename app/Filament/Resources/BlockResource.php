@@ -20,8 +20,9 @@ use App\Filament\Resources\BlockResource\RelationManagers\ItemsRelationManager; 
 class BlockResource extends Resource
 {
     protected static ?string $model = Block::class;
-
+    protected static ?string $navigationLabel = 'Блоки';
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?int $navigationSort = 99;
 
     public static function form(Form $form): Form
     {

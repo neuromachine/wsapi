@@ -29,7 +29,10 @@ class BlockItemResource extends Resource
 {
     protected static ?string $model = BlockItem::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+
+    protected static ?string $navigationLabel = 'Позиции';
+    protected static ?string $navigationIcon = 'heroicon-o-circle-stack';
+    protected static ?int $navigationSort = 2;
 
     public static function form(Form $form): Form
     {
