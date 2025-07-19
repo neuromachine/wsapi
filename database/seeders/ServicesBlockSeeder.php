@@ -106,9 +106,26 @@ class ServicesBlockSeeder extends Seeder
                 //Видеопродакшн
                 'promo-i-korporativnoe-video',
                 'video-dlia-socsetei-reels',
+                'animaciia-i-mousn-dizain',
 
+                //Фото и графика
+                //Предметная и репортажная съёмка
+                'predmetnaia-i-reportaznaia-sieemka',
+                'obrabotka-i-retus',
+                'illiustracii-infografika',
 
-                // … другие категории
+                //Консалтинг и стратегия
+
+                //Digital-стратегии
+                'analiz-konkurentov',
+                'customer-journey-map',
+                'planirovanie-voronki-i-kpi',
+
+                //Консультации и обучение
+                'obucenie-sotrudnikov',
+                'vorksopy-po-prodvizeniiu',
+                'soprovozdenie-startapov',
+
             ];
 
             foreach ($categoryKeys as $catKey) {
