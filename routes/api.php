@@ -8,6 +8,9 @@ use \App\Http\Controllers\Api\BlockCategoryController;
 use \App\Http\Controllers\Api\BlockController;
 use \App\Http\Controllers\Api\BlockItemController;
 
+
+use App\Http\Controllers\Api\FormController;
+
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Http\Request;
 //sleep(3);
@@ -95,3 +98,6 @@ Route::post('/offers/request', function (Request $request) {
 
     return response()->json(['status' => 'ok']);
 });
+
+
+Route::post('/forms/submit', [FormController::class, 'store']);
