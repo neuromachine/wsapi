@@ -12,9 +12,13 @@ class FormController extends Controller
 {
     public function store(FormSubmitRequest $request)
     {
+
+        $validated = $request->validated();
+        $raw = $request->input('data');
+
         $form = Form::create([
             'form_key' => $request->form_key,
-            'data'     => $request->data,
+            'data'     => $raw,
             'meta'     => $request->meta ?? null,
             'status' => FormStatus::Pending,
         ]);
