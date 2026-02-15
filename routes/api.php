@@ -8,6 +8,9 @@ use \App\Http\Controllers\Api\BlockCategoryController;
 use \App\Http\Controllers\Api\BlockController;
 use \App\Http\Controllers\Api\BlockItemController;
 
+
+use App\Http\Controllers\Api\FormController;
+
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Http\Request;
 //sleep(3);
@@ -68,30 +71,4 @@ Route::prefix('blocks/items')
         Route::get('{slug}', 'index')->name('index');
     });
 
-Route::post('/offers/request', function (Request $request) {
-    $itemId = $request->input('id');
-    $contact = $request->input('contact');
-
-    $item = DB::table('block_items')
-        ->where('id', $itemId)
-        ->first();
-
-    // Формируем текст письма
-    if ($item) {
-        $message = "Запрос на предложение:\n\n";
-        $message .= "ID позиции: {$item->id}\n";
-        $message .= "Название: {$item->name}\n";
-        $message .= "Контакт: {$contact}\n";
-    } else {
-        $message = "Запрос на предложение (позиция не найдена):\n\n";
-        $message .= "Контакт: {$contact}\n";
-    }
-
-    // Отправка письма
-    Mail::raw($message, function ($msg) {
-        $msg->to('lili@ws-pro.ru')
-            ->subject('Запрос предложения с сайта');
-    });
-
-    return response()->json(['status' => 'ok']);
-});
+Route::post('/forms/submit', [FormController::class, 'store']);
