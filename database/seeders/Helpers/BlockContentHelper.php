@@ -8,7 +8,7 @@ class BlockContentHelper
     {
         $defaults = [
             'title' => 'Заголовок по умолчанию',
-            'url' => 'http://ws-pro.ru/',
+            'url' => '-',
             'price' => '0',
             'descr' => 'краткое описание отсутствует',
             'content' => [

@@ -71,11 +71,32 @@ class BlockItemPropertyValuesSeeder extends Seeder
                 ];
             }
 
+            if(!empty($data['workclass']) && is_array($data['workclass']))
+            {
+                foreach ($data['workclass'] as $wClass) {
+                    $rows[] = [
+                        'id' => $id++, 'item_id' => $itemId, 'property_id' => 26, // workclass
+                        'value' => json_encode($wClass), 'created_at' => now(), 'updated_at' => now()
+                    ];
+                }
+            }
+            else
+            {
+                $rows[] = [
+                    'id' => $id++, 'item_id' => $itemId, 'property_id' => 26, // workclass (static)
+                    'value' => json_encode([['key' => 'develop', 'label' => 'Разработка']]),
+                    'created_at' => now(), 'updated_at' => now()
+                ];
+            }
+
+
+                /*
             $rows[] = [
                 'id' => $id++, 'item_id' => $itemId, 'property_id' => 26, // workclass (static)
-                'value' => json_encode([['key' => 'develop', 'label' => 'Разработка']]),
+                'value' => json_encode($data['workclass']),
                 'created_at' => now(), 'updated_at' => now()
             ];
+                */
 
 /*            foreach ($data['files'] as $file) {
                 $rows[] = [
@@ -92,6 +113,21 @@ class BlockItemPropertyValuesSeeder extends Seeder
             $rows[] = [
                 'id' => $id++, 'item_id' => $itemId, 'property_id' => 28, // date
                 'value' => $data['date'], 'created_at' => now(), 'updated_at' => now()
+            ];
+
+            $rows[] = [
+                'id' => $id++, 'item_id' => $itemId, 'property_id' => 29, // workdescr
+                'value' => $data['content']['body'], 'created_at' => now(), 'updated_at' => now()
+            ];
+
+            $rows[] = [
+                'id' => $id++, 'item_id' => $itemId, 'property_id' => 30, // targets
+                'value' => $data['content']['head'], 'created_at' => now(), 'updated_at' => now()
+            ];
+
+            $rows[] = [
+                'id' => $id++, 'item_id' => $itemId, 'property_id' => 31, // tech
+                'value' => $data['content']['footer'], 'created_at' => now(), 'updated_at' => now()
             ];
         }
 
