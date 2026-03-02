@@ -12,6 +12,7 @@ use App\Http\Resources\BlockItemResource;
 
 use App\Http\Resources\BlockCategoryStructureResource;
 
+
 class BlockCategoryController extends Controller
 {
     protected BlockCategoryRepository $repo;
@@ -22,12 +23,10 @@ class BlockCategoryController extends Controller
         $this->repo = $repo;
     }
 
-    public function index(string $slug)
+    public function index(string $locale, string $slug)
     {
-        //return dd($this->repo->getCategory($slug));
-
         return new BlockCategoryResource(
-            $this->repo->getCategory($slug)
+            $this->repo->getCategory($locale,$slug)
         );
     }
 

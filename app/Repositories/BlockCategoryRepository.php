@@ -16,7 +16,28 @@ class BlockCategoryRepository
         return BlocksCategories::with('childrenRecursive')->whereNull('parent_id')->firstOrFail();
     }
 
+    public function getCategory(string $locale, string $key)
+    {
+        $category = BlocksCategories::where('key', $key)->firstOrFail();
 
+        return BlocksCategories::with([
+            'blocks.properties',
+            'blocks.items' => function ($q) use ($locale, $category) {
+                $q->where('category_id', $category->id)
+                    ->whereHas('propertyValues', function ($sub) use ($locale) {
+                        $sub->where('locale', $locale);
+                    });
+            },
+            'blocks.items.propertyValues' => function ($q) use ($locale) {
+                $q->where('locale', $locale);
+            },
+            'blocks.items.propertyValues.property',
+        ])
+            ->where('id', $category->id)
+            ->first();
+    }
+
+/*
     public function getCategory(string $key)
     {
 
@@ -34,6 +55,7 @@ class BlockCategoryRepository
             ->firstOrFail();
 
     }
+*/
 
 /*
     public function getAllWithBlockCount(): Collection

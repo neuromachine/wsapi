@@ -17,7 +17,12 @@ class BlockCategoryResource extends JsonResource
                     $this->whenLoaded('blocks')
                 ),*/
 
+                'blocks' => BlockResource::collection(
+                    $this->whenLoaded('blocks')
+                ),
+
                 // Фильтруем items внутри каждого блока по текущей категории:
+                /*
                 'blocks' => BlockResource::collection(
                     $this->whenLoaded('blocks', function () {
                         return $this->blocks->map(function ($block) {
@@ -31,6 +36,7 @@ class BlockCategoryResource extends JsonResource
                         });
                     })
                 ),
+                */
 
 
                 // рекурсивные под‑категории TODO: проверить на категориях у кот. есть вложенные!

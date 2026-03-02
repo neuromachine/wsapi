@@ -28,46 +28,68 @@ class BlockItemPropertyValuesSeeder extends Seeder
             [509, 'kkkagarant', 'Kkkagarant'],
             [510, 'barma', 'Barma'],
             [511, 'brutality', 'BrutalityGame'],
+            [512, 'rayaray_en', 'RayaRay'],
         ];
 
         $rows = [];
         $id = 101;
 
+        $locale = 'ru';
+
         foreach ($items as [$itemId, $key, $name]) {
+
+            //if($key !== 'rayaray_en') continue;
+
             $rows[] = ['comment' => "// {$itemId} // {$key}, // {$name}"];
 
             $data = BlockContentHelper::getData($key);
+            if(!empty($data['locale']))
+            {
+                $locale = $data['locale'];
+            }
 
             $rows[] = [
                 'id' => $id++, 'item_id' => $itemId, 'property_id' => 20, // title
-                'value' => $data['title'], 'created_at' => now(), 'updated_at' => now()
+                'value' => $data['title'],
+                'locale' => $locale,
+                'created_at' => now(),
+                'updated_at' => now()
             ];
 
             $rows[] = [
                 'id' => $id++, 'item_id' => $itemId, 'property_id' => 21, // url
-                'value' => $data['url'], 'created_at' => now(), 'updated_at' => now()
+                'value' => $data['url'],
+                'locale' => $locale,
+                'created_at' => now(), 'updated_at' => now()
             ];
 
             $rows[] = [
                 'id' => $id++, 'item_id' => $itemId, 'property_id' => 22, // descr
-                'value' => $data['descr'], 'created_at' => now(), 'updated_at' => now()
+                'value' => $data['descr'],
+                'locale' => $locale,
+                'created_at' => now(), 'updated_at' => now()
             ];
 
             $rows[] = [
                 'id' => $id++, 'item_id' => $itemId, 'property_id' => 23, // content
                 'value' => $data['content']['head'] . $data['content']['body'] . $data['content']['footer'],
+                'locale' => $locale,
                 'created_at' => now(), 'updated_at' => now()
             ];
 
             $rows[] = [
                 'id' => $id++, 'item_id' => $itemId, 'property_id' => 24, // thumb
-                'value' => 'thumb_'.$key.'.png', 'created_at' => now(), 'updated_at' => now()
+                'value' => 'thumb_'.$key.'.png',
+                'locale' => $locale,
+                'created_at' => now(), 'updated_at' => now()
             ];
 
             foreach ($data['image'] as $imgIndex => $imagePath) {
                 $rows[] = [
                     'id' => $id++, 'item_id' => $itemId, 'property_id' => 25, // images
-                    'value' => $key.'/'.$imagePath, 'created_at' => now(), 'updated_at' => now()
+                    'value' => $key.'/'.$imagePath,
+                    'locale' => $locale,
+                    'created_at' => now(), 'updated_at' => now()
                 ];
             }
 
@@ -76,7 +98,9 @@ class BlockItemPropertyValuesSeeder extends Seeder
                 foreach ($data['workclass'] as $wClass) {
                     $rows[] = [
                         'id' => $id++, 'item_id' => $itemId, 'property_id' => 26, // workclass
-                        'value' => json_encode($wClass), 'created_at' => now(), 'updated_at' => now()
+                        'value' => json_encode($wClass),
+                        'locale' => $locale,
+                        'created_at' => now(), 'updated_at' => now()
                     ];
                 }
             }
@@ -85,6 +109,7 @@ class BlockItemPropertyValuesSeeder extends Seeder
                 $rows[] = [
                     'id' => $id++, 'item_id' => $itemId, 'property_id' => 26, // workclass (static)
                     'value' => json_encode([['key' => 'develop', 'label' => 'Разработка']]),
+                    'locale' => $locale,
                     'created_at' => now(), 'updated_at' => now()
                 ];
             }
@@ -107,27 +132,37 @@ class BlockItemPropertyValuesSeeder extends Seeder
 
             $rows[] = [
                 'id' => $id++, 'item_id' => $itemId, 'property_id' => 27, // price
-                'value' => $data['price'], 'created_at' => now(), 'updated_at' => now()
+                'value' => $data['price'],
+                'locale' => $locale,
+                'created_at' => now(), 'updated_at' => now()
             ];
 
             $rows[] = [
                 'id' => $id++, 'item_id' => $itemId, 'property_id' => 28, // date
-                'value' => $data['date'], 'created_at' => now(), 'updated_at' => now()
+                'value' => $data['date'],
+                'locale' => $locale,
+                'created_at' => now(), 'updated_at' => now()
             ];
 
             $rows[] = [
                 'id' => $id++, 'item_id' => $itemId, 'property_id' => 29, // workdescr
-                'value' => $data['content']['body'], 'created_at' => now(), 'updated_at' => now()
+                'value' => $data['content']['body'],
+                'locale' => $locale,
+                'created_at' => now(), 'updated_at' => now()
             ];
 
             $rows[] = [
                 'id' => $id++, 'item_id' => $itemId, 'property_id' => 30, // targets
-                'value' => $data['content']['head'], 'created_at' => now(), 'updated_at' => now()
+                'value' => $data['content']['head'],
+                'locale' => $locale,
+                'created_at' => now(), 'updated_at' => now()
             ];
 
             $rows[] = [
                 'id' => $id++, 'item_id' => $itemId, 'property_id' => 31, // tech
-                'value' => $data['content']['footer'], 'created_at' => now(), 'updated_at' => now()
+                'value' => $data['content']['footer'],
+                'locale' => $locale,
+                'created_at' => now(), 'updated_at' => now()
             ];
         }
 
@@ -167,7 +202,23 @@ class BlockItemPropertyValuesSeeder extends Seeder
         // Объединяем автоматические и ручные записи
         $insert = array_merge($insert, $manual);
 
+        $defaults = [
+            'id'          => null,
+            'item_id'     => null,
+            'property_id' => null,
+            'value'       => null,
+            'value_type'  => 'string',
+            'locale'      => null,
+            'version'     => null,
+            'created_at'  => null,
+            'updated_at'  => null,
+        ];
 
-        DB::table('block_item_property_values')->insert($insert);
+        $normalized = array_map(function ($row) use ($defaults) {
+            return array_merge($defaults, $row);
+        }, $insert);
+
+
+        DB::table('block_item_property_values')->insert($normalized);
     }
 }
