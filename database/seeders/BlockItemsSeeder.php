@@ -33,6 +33,7 @@ class BlockItemsSeeder extends Seeder
             ['id' => 510, 'block_id' => 2, 'category_id' => 100, 'key' => 'barma', 'name' => 'Barma', 'created_at' => now(), 'updated_at' => now()],
             ['id' => 511, 'block_id' => 2, 'category_id' => 100, 'key' => 'brutality', 'name' => 'BrutalityGame', 'created_at' => now(), 'updated_at' => now()],
             ['id' => 512, 'block_id' => 2, 'category_id' => 100, 'key' => 'rayaray_en', 'name' => 'RayaRay', 'created_at' => now(), 'updated_at' => now()],
+            ['id' => 513, 'block_id' => 2, 'category_id' => 100, 'key' => 'shincenter_en', 'name' => 'Topshina', 'created_at' => now(), 'updated_at' => now()],
             ['id' => 1000, 'block_id' => 3, 'category_id' => 200, 'key' => 'contacts', 'name' => 'Контакты', 'created_at' => now(), 'updated_at' => now()],
             ['id' => 1001, 'block_id' => 3, 'category_id' => 200, 'key' => 'about', 'name' => 'О нас', 'created_at' => now(), 'updated_at' => now()],
             ['id' => 1002, 'block_id' => 3, 'category_id' => 200, 'key' => 'price', 'name' => 'Цены', 'created_at' => now(), 'updated_at' => now()],

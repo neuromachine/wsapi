@@ -29,6 +29,7 @@ class BlockItemPropertyValuesSeeder extends Seeder
             [510, 'barma', 'Barma'],
             [511, 'brutality', 'BrutalityGame'],
             [512, 'rayaray_en', 'RayaRay'],
+            [513, 'shincenter_en', 'Topshina'],
         ];
 
         $rows = [];
@@ -208,7 +209,7 @@ class BlockItemPropertyValuesSeeder extends Seeder
             'property_id' => null,
             'value'       => null,
             'value_type'  => 'string',
-            'locale'      => null,
+            'locale'      => 'ru',
             'version'     => null,
             'created_at'  => null,
             'updated_at'  => null,

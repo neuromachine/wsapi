@@ -191,6 +191,7 @@ class ServicesBlockSeeder extends Seeder
                                 ['item_id'     => $itemId, 'property_id' => $propertyId],
                                 [
                                     'value'      => is_array($propValue) ? json_encode($propValue) : $propValue,
+                                    'locale'      => 'ru',
                                     'created_at' => now(),
                                     'updated_at' => now(),
                                 ]
