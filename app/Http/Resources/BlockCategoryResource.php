@@ -7,46 +7,34 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class BlockCategoryResource extends JsonResource
 {
+    private function resolveContent(): array
+    {
+        if (! $this->relationLoaded('blocks')) {
+            return [];
+        }
+
+        $descrBlock = $this->blocks->firstWhere('key', 'descr_data');
+
+        if (! $descrBlock || ! $descrBlock->relationLoaded('items')) {
+            return [];
+        }
+
+        return \App\Support\EavContentResolver::resolve($descrBlock->items, single: true);
+    }
+
     public function toArray(Request $request): array
     {
         return array_merge(
             $this->attributesToArray(),
-
             [
-/*                'blocks' => BlockResource::collection(
-                    $this->whenLoaded('blocks')
-                ),*/
-
+                'content' => $this->resolveContent(),
                 'blocks' => BlockResource::collection(
                     $this->whenLoaded('blocks')
                 ),
-
-                // Фильтруем items внутри каждого блока по текущей категории:
-                /*
-                'blocks' => BlockResource::collection(
-                    $this->whenLoaded('blocks', function () {
-                        return $this->blocks->map(function ($block) {
-                            $filteredItems = $block
-                                ->itemsForCategory($this->id)
-                                ->get();
-
-                            $block->setRelation('items', $filteredItems);
-
-                            return $block;
-                        });
-                    })
-                ),
-                */
-
-
                 // рекурсивные под‑категории TODO: проверить на категориях у кот. есть вложенные!
                 'children' => BlockCategoryResource::collection(
                     $this->whenLoaded('childrenRecursive')
                 ),
-//                // позиции (items) в категории TODO: оставлено для вариативного использования см. репозиторий (нужно загрузить данные при возможном использовании)
-//                'items'    => BlockItemResource::collection(
-//                    $this->whenLoaded('items')
-//                ),
             ]
         );
     }

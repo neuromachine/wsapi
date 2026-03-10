@@ -23,7 +23,7 @@ class BlockCategoryController extends Controller
         $this->repo = $repo;
     }
 
-    public function index(string $locale, string $slug)
+    public function index(string $locale, string $slug): BlockCategoryResource
     {
         return new BlockCategoryResource(
             $this->repo->getCategory($locale,$slug)
