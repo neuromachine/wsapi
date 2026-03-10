@@ -52,6 +52,14 @@ class BlockSeeder extends Seeder
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
+            [
+                'id' => 5,
+                'key' => 'descr_data',
+                'name' => 'Описательные данные',
+                'description' => 'Непосредственное наполнение страниц - контент области, мета и т.п',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
         ]);
     }
 }

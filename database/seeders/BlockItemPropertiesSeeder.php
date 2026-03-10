@@ -51,6 +51,10 @@ class BlockItemPropertiesSeeder extends Seeder
             ['id' => 107, 'block_id' => 4, 'key' => 'reelsSystem', 'name' => 'Json с массивом позиций', 'type' => 'json', 'created_at' => now(), 'updated_at' => now()],
             ['id' => 108, 'block_id' => 4, 'key' => 'extras', 'name' => 'Json с массивом позиций', 'type' => 'json', 'created_at' => now(), 'updated_at' => now()],
             ['id' => 109, 'block_id' => 4, 'key' => 'important', 'name' => 'Json с массивом позиций', 'type' => 'json', 'created_at' => now(), 'updated_at' => now()],
+            ['id' => 110, 'block_id' => 5, 'key' => 'title', 'name' => 'Заголовок', 'type' => 'string', 'created_at' => now(), 'updated_at' => now()],
+            ['id' => 111, 'block_id' => 5, 'key' => 'descr', 'name' => 'Краткое описание', 'type' => 'text', 'created_at' => now(), 'updated_at' => now()],
+            ['id' => 112, 'block_id' => 5, 'key' => 'content', 'name' => 'Контент (HTML)', 'type' => 'html', 'created_at' => now(), 'updated_at' => now()],
+            ['id' => 113, 'block_id' => 5, 'key' => 'metadata', 'name' => 'Json с массивом используемым в целях продвижения', 'type' => 'json', 'created_at' => now(), 'updated_at' => now()],
         ]);
     }
 }

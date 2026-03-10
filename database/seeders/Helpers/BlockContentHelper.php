@@ -49,7 +49,7 @@ class BlockContentHelper
         return self::getData($key)['content']['body'];
     }
 
-    public static function getCatData(string $key): array
+    public static function getCatData(string $key, string $section = 'ru'): array
     {
         $defaults = [
             'descr' => 'Раздел в стадии наполнения',
@@ -64,9 +64,15 @@ class BlockContentHelper
 
         $raw = file_get_contents($jsonPath);
         $data = json_decode($raw, true);
+
         if (json_last_error() !== JSON_ERROR_NONE || !is_array($data)) {
             $defaults['descr'] = 'Ошибка формата JSON';
             return $defaults;
+        }
+
+        if(!empty($data[$section]))
+        {
+            return array_replace_recursive($defaults, $data[$section]);
         }
 
         return array_replace_recursive($defaults, $data);

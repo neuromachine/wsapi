@@ -1,0 +1,108 @@
+<?php
+
+namespace Database\Seeders;
+
+use Database\Seeders\Helpers\BlockContentHelper;
+use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+
+class BlockItemsForCategoriesDesrData extends Seeder
+{
+    /**
+     * Run the database seeds.
+     */
+    public function run(): void
+    {
+        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
+
+        $block = DB::table('blocks')
+            ->where('key', 'descr_data')
+            ->first();
+        if (!$block) {
+            Log::error("Block with key not found, abort seeding");
+            return;
+        }
+
+        $blockId = $block->id;
+
+        DB::transaction(function () use ($blockId) {
+            $categories = DB::table('blocks_categories')->get();
+            foreach ($categories as $category) {
+                // TODO: check to empty cat data
+                $item = DB::table('block_items')
+                    ->updateOrInsert(
+                        [
+                            'block_id'    => $blockId,
+                            'category_id' => $category->id,
+                            'key'         => $category->key,
+                        ],
+                        [
+                            'name'       => $category->name,
+                            'key'       => $category->key,
+                            'created_at' => now(),
+                            'updated_at' => now(),
+                        ]
+                    );
+
+                // Получаем ID только что вставленной (или существующей) позиции
+                $itemId = DB::table('block_items')
+                    ->where('block_id', $blockId)
+                    ->where('key', $category->key)
+                    ->value('id');
+
+
+                $sections = ['ru','en'];
+
+                foreach ($sections as $section) {
+
+                    $catJsonData = BlockContentHelper::getCatData($category->key,$section);
+
+                    DB::table('block_item_property_values')
+                        ->updateOrInsert(
+                            ['item_id'     => $itemId, 'property_id' => 110, 'locale' => $section], // title
+                            [
+                                'value'      => $category->name,
+                                'created_at' => now(),
+                                'updated_at' => now(),
+                            ]
+                        );
+
+                    DB::table('block_item_property_values')
+                        ->updateOrInsert(
+                            ['item_id'     => $itemId, 'property_id' => 111, 'locale' => $section], // descr
+                            [
+                                'value'      => $catJsonData['descr'],
+                                'created_at' => now(),
+                                'updated_at' => now(),
+                            ]
+                        );
+
+                    DB::table('block_item_property_values')
+                        ->updateOrInsert(
+                            ['item_id'     => $itemId, 'property_id' => 112, 'locale' => $section], // content
+                            [
+                                'value'      => $catJsonData['content'],
+                                'created_at' => now(),
+                                'updated_at' => now(),
+                            ]
+                        );
+
+                    DB::table('block_item_property_values')
+                        ->updateOrInsert(
+                            ['item_id'     => $itemId, 'property_id' => 113, 'locale' => $section], // metadata
+                            [
+                                'value'      => '{}',
+                                'value_type'      => 'json',
+                                'created_at' => now(),
+                                'updated_at' => now(),
+                            ]
+                        );
+                }
+            }
+        });
+
+    }
+}
