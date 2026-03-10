@@ -30,12 +30,14 @@ class BlockCategoryController extends Controller
         );
     }
 
-    public function structure(?string $slug = null)
+    public function structure(string $locale,?string $slug = null)
     {
-        return new BlockCategoryStructureResource($this->repo->getCategoriesRecursive($slug));
+        return new BlockCategoryStructureResource(
+            $this->repo->getCategoriesRecursive($locale,$slug)
+        );
     }
 
-    public function offers(string $slug)
+    public function offers(string $locale,string $slug)
     {
         $category = BlocksCategories::where('key', $slug)->firstOrFail();
         $block = Block::where('key', 'offers')->firstOrFail();

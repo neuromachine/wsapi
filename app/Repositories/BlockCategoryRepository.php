@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Collection;
 class BlockCategoryRepository
 {
 
-    public function getCategoriesRecursive(string $key)
+    public function getCategoriesRecursive(string $locale,string $key)
     {
         if($key)
         {
