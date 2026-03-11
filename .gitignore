@@ -22,6 +22,6 @@ yarn-error.log
 /.vscode
 /.zed
 /.osp
-
-
+/public/error_log
+/.well-known
 composer.phar
