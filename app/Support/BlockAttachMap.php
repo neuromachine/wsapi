@@ -11,7 +11,7 @@ final class BlockAttachMap
     private const MAP = [
         'descr_data' => ['attach' => 'content',  'single' => true],
         'hero'       => ['attach' => 'sections', 'single' => true],
-        'services'   => ['attach' => 'sections', 'single' => false],
+        'services'   => ['attach' => 'sections', 'single' => true],
     ];
 
     public static function isSingle(string $blockKey): bool
