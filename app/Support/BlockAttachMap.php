@@ -9,14 +9,19 @@ final class BlockAttachMap
      * Заменить на чтение из БД (blocks.attach) когда колонка будет добавлена.
      */
     private const MAP = [
-        'descr_data' => 'content',
-        'hero'       => 'sections',
-        'services'   => 'sections',
+        'descr_data' => ['attach' => 'content',  'single' => true],
+        'hero'       => ['attach' => 'sections', 'single' => true],
+        'services'   => ['attach' => 'sections', 'single' => false],
     ];
+
+    public static function isSingle(string $blockKey): bool
+    {
+        return self::MAP[$blockKey]['single'] ?? false;
+    }
 
     public static function get(string $blockKey): ?string
     {
-        return self::MAP[$blockKey] ?? null;
+        return self::MAP[$blockKey]['attach'] ?? null;
     }
 
     public static function is(string $blockKey, string $attach): bool

@@ -45,7 +45,7 @@ class BlockCategoryResource extends JsonResource
 
             $sections[$block->key] = EavContentResolver::resolve(
                 $block->items,
-                single: false  // sections — всегда массив объектов
+                single: BlockAttachMap::isSingle($block->key)
             );
         }
 

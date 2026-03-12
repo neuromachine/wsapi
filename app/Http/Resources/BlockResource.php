@@ -16,8 +16,8 @@ class BlockResource extends JsonResource
 
     public function toArray($request): array
     {
-        $items = $this->whenLoaded('items', fn() => $this->items, collect());
-        $isSingleton = BlockAttachMap::is($this->key, 'content');
+        $items = $this->relationLoaded('items') ? $this->items : collect();
+        $isSingleton = BlockAttachMap::isSingle($this->key);
 
         return array_merge(
             $this->attributesToArray(), // TODO: перечислить поля явно
