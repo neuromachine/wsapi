@@ -16,14 +16,16 @@ class DatabaseSeeder extends Seeder
         // User::factory(10)->create();
 
         $this->call([
-            BlocksCategoriesSeeder::class,
+            BlocksMainCategoriesSeeder::class,
+            BlocksServicesCategoriesSeeder::class,
             BlockSeeder::class,
             BlockItemPropertiesSeeder::class,
             BlockItemsSeeder::class,
             BlockItemPropertyValuesSeeder::class,
+            BlocksForPortfolioPropertyValuesSeeder::class,
             ServicesBlockSeeder::class,
             KpBlockSeeder::class,
-            BlockItemsForCategoriesDesrData::class,
+            BlockItemsForCategoriesDesrDataSeeder::class,
 
         ]);
 

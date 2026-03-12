@@ -4,39 +4,34 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Database\Seeders\Helpers\BlockContentHelper;
 
-class BlocksCategoriesSeeder extends Seeder
+class BlocksServicesCategoriesSeeder extends Seeder
 {
     public function run(): void
     {
-        // Отключаем FK и очищаем таблицу
         DB::statement('SET FOREIGN_KEY_CHECKS=0;');
-        DB::table('blocks_categories')->delete();
         DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 
-        // Стартовая корневая категория "Услуги"
-        DB::table('blocks_categories')->insert([
-            [
-                'id'         => 1,
-                'key'        => 'services',
-                'name'       => 'Услуги',
-                'description'=> 'Услуги WS',
-                'content'=> '-',
-                'parent_id'  => null,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-        ]);
+        //DB::table('blocks_categories')->delete();
+
+        $rootCategory = DB::table('blocks_categories')
+            ->where('key', 'services')
+            ->first();
+        if (!$rootCategory) {
+            Log::error("Root category key not found, abort seeding");
+            return;
+        }
 
         // Загружаем JSON с категориями
         $jsonPath = storage_path('app/tree.json');
         $data = json_decode(file_get_contents($jsonPath), true);
 
-        $id = 2;
+        $id = 1000;
         $categories = [];
-        $usedKeys = ['services'];
+        $usedKeys = ['services']; // TODO: ошибка - есть и другие, ниже дописать забор и сравнение с реально возможными
 
         // Функция для генерации уникального ключа
         $makeUniqueKey = function(string $base) use (&$usedKeys) {
@@ -61,10 +56,9 @@ class BlocksCategoriesSeeder extends Seeder
                 'id'         => $groupId,
                 'key'        => $slug,
                 'name'       => $groupName,
-//                'description'=> $groupValue['description'] ?? 'Раздел «'.$groupName.'»',
                 'description'=> $catDirData['descr'],
                 'content'=> $catDirData['content'],
-                'parent_id'  => 1,
+                'parent_id'  => $rootCategory->id,
                 'created_at' => now(),
                 'updated_at' => now(),
             ];
@@ -109,13 +103,7 @@ class BlocksCategoriesSeeder extends Seeder
             }
         }
 
-        // Вставляем все категории
         DB::table('blocks_categories')->insert($categories);
 
-        DB::table('blocks_categories')->insert([
-            [ 'id' => 100, 'key' => 'portfolio', 'name' => 'Портфолио', 'description' => 'Наши работы', 'content' => '-', 'parent_id' => null, 'created_at' => now(), 'updated_at' => now(), ],
-            [ 'id' => 200, 'key' => 'pages', 'name' => 'ws-pro.ru', 'description' => 'Карта сайта', 'content' => '<ul><li><a href="/">Главная</a></li></ul>', 'parent_id' => null, 'created_at' => now(), 'updated_at' => now(), ],
-            [ 'id' => 300, 'key' => 'kp', 'name' => 'Ком.предложения', 'description' => 'КП - для вас', 'content' => '-', 'parent_id' => null, 'created_at' => now(), 'updated_at' => now(), ]
-        ]);
     }
 }

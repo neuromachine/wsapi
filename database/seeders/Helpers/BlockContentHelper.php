@@ -49,6 +49,27 @@ class BlockContentHelper
         return self::getData($key)['content']['body'];
     }
 
+    public static function getEntityData(string $filename): array
+    {
+        $defaults = [];
+
+        $jsonPath = storage_path("app/blocks/{$filename}.json");
+        if (!file_exists($jsonPath)) {
+            return $defaults;
+        }
+
+        $raw = file_get_contents($jsonPath);
+        $data = json_decode($raw, true);
+
+        if (json_last_error() !== JSON_ERROR_NONE || !is_array($data)) {
+            return $defaults;
+        }
+
+        if(!empty($data['items'])) return $data['items'];
+
+        return $defaults;
+    }
+
     public static function getCatData(string $key, string $section = 'ru'): array
     {
         $defaults = [

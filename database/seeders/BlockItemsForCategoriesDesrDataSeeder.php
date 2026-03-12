@@ -8,7 +8,7 @@ use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
-class BlockItemsForCategoriesDesrData extends Seeder
+class BlockItemsForCategoriesDesrDataSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -30,8 +30,8 @@ class BlockItemsForCategoriesDesrData extends Seeder
 
         DB::transaction(function () use ($blockId) {
             $categories = DB::table('blocks_categories')->get();
+            // TODO: check to empty cat data
             foreach ($categories as $category) {
-                // TODO: check to empty cat data
                 $item = DB::table('block_items')
                     ->updateOrInsert(
                         [
