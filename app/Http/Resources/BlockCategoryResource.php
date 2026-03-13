@@ -57,6 +57,7 @@ class BlockCategoryResource extends JsonResource
         return array_merge(
             $this->attributesToArray(),
             [
+                'section' => $request->locale, // TODO: refactor
                 'content' => $this->resolveContent(),
                 'sections' => $this->resolveSections(),
                 'blocks' => BlockResource::collection(
