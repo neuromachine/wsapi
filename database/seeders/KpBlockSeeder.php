@@ -21,7 +21,7 @@ class KpBlockSeeder extends Seeder
 
         // Получаем ID блока «Услуги» (предполагается, что key = 'services')
         $block = DB::table('blocks')
-            ->where('key', 'kp')
+            ->where('key', 'ind_offers')
             ->first();
 
         if (!$block) {
@@ -34,7 +34,7 @@ class KpBlockSeeder extends Seeder
         DB::transaction(function () use ($blockId) {
             // Фиксированный список категорий
             $categoryKeys = [
-                'kp',
+                'ind_offers',
             ];
 
             foreach ($categoryKeys as $catKey) {
@@ -74,7 +74,7 @@ class KpBlockSeeder extends Seeder
                     // Получаем ID только что вставленной (или существующей) позиции
                     $itemId = DB::table('block_items')
                         ->where('block_id', $blockId)
-                        ->where('key', $itemDef['key'])
+                        ->where('key', $itemDef['key'])//TODO: не учитывается категория?
                         ->value('id');
 
                     if (!$itemId) {

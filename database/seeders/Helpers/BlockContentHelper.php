@@ -1,9 +1,42 @@
 <?php
 
 namespace Database\Seeders\Helpers;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Collection;
 
 class BlockContentHelper
 {
+    public static function getBlockKeys(string $category): Collection
+    {
+        $directory = "cat". '/' . $category;
+        if (! Storage::disk('blocks')->exists($directory)) {
+            throw new \InvalidArgumentException(
+                "Block category directory not found: [{$directory}]"
+            );
+        }
+        return collect(Storage::disk('blocks')->files($directory))
+            ->filter(fn(string $path) => str_ends_with($path, '.json'))
+            ->map(fn(string $path) => pathinfo($path, PATHINFO_FILENAME))
+            ->values();
+    }
+
+    public static function getBlockContent(string $category, string $key): array
+    {
+        $path = "cat". '/' . $category . '/' . $key . '.json';
+
+        if (! Storage::disk('blocks')->exists($path)) {
+            throw new \RuntimeException("Block file not found: [{$path}]");
+        }
+
+        $content = json_decode(
+            Storage::disk('blocks')->get($path),
+            associative: true,
+            flags: JSON_THROW_ON_ERROR
+        );
+
+        return $content;
+    }
+
     public static function getData(string $key): array
     {
         $defaults = [

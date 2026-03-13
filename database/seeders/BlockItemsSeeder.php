@@ -19,6 +19,25 @@ class BlockItemsSeeder extends Seeder
 //        DB::table('block_items')->truncate();
         DB::table('block_items')->delete();
 
+
+        /*
+
+        $rootCategory = DB::table('blocks_categories')
+            ->where('key', 'main')
+            ->first();
+        if (!$rootCategory) {
+            Log::error("Root category key not found, abort seeding");
+            return;
+        }
+
+        DB::table('block_items')->insert([
+            ['id' => 100, 'block_id' => 6, 'category_id' => $rootCategory->id, 'key' => 'hero', 'name' => 'Блок HERO на главной', 'created_at' => now(), 'updated_at' => now()],
+            ['id' => 101, 'block_id' => 7, 'category_id' => $rootCategory->id, 'key' => 'section_service', 'name' => 'Блок Услуги на главной', 'created_at' => now(), 'updated_at' => now()],
+        ]);
+        */
+
+
+
         $rootCategory = DB::table('blocks_categories')
             ->where('key', 'portfolio')
             ->first();
@@ -26,7 +45,6 @@ class BlockItemsSeeder extends Seeder
             Log::error("Root category key not found, abort seeding");
             return;
         }
-
 
         DB::table('block_items')->insert([
             ['id' => 500, 'block_id' => 2, 'category_id' => $rootCategory->id, 'key' => 'shincenter', 'name' => 'Шинцентр.рф', 'created_at' => now(), 'updated_at' => now()],
@@ -44,6 +62,8 @@ class BlockItemsSeeder extends Seeder
             ['id' => 512, 'block_id' => 2, 'category_id' => $rootCategory->id, 'key' => 'rayaray_en', 'name' => 'RayaRay', 'created_at' => now(), 'updated_at' => now()],
             ['id' => 513, 'block_id' => 2, 'category_id' => $rootCategory->id, 'key' => 'shincenter_en', 'name' => 'Topshina', 'created_at' => now(), 'updated_at' => now()],
         ]);
+
+
 
         $rootCategoryP = DB::table('blocks_categories')
             ->where('key', 'pages')

@@ -23,6 +23,7 @@ class BlocksForPortfolioPropertyValuesSeeder extends Seeder
             return;
         }
 
+        // TODO: legacy - берет данные из категорий, переделать на забор из json файлов
         $items = DB::table('block_items')->where('category_id', $rootCategory->id)->get(); // TODO: check to empty cat data
 
 
