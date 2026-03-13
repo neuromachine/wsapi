@@ -16,6 +16,14 @@ class EavContentResolver
             default   => $value,
         };
     }
+
+    private static function flattenItem(mixed $item): array
+    {
+        return $item->propertyValues->mapWithKeys(function ($pv) {
+            return [$pv->property->key => self::castValue($pv->value, $pv->value_type)];
+        })->all();
+    }
+
     /**
      * Разворачивает items блока с EAV-значениями в плоский массив content.
      *
@@ -27,14 +35,19 @@ class EavContentResolver
      * @param Collection $items  — block->items (с загруженным propertyValues.property)
      * @param bool $single       — true: вернуть первый элемент, false: вернуть массив
      */
-    public static function resolve(Collection $items, bool $single = true): array
+    public static function resolve(Collection $items, bool $single = true, bool $keyed = false): array
     {
-        $resolved = $items->map(function ($item) {
-            return $item->propertyValues->mapWithKeys(function ($pv) {
-                return [$pv->property->key => self::castValue($pv->value, $pv->value_type)];
-            })->all();
-        });
+        if ($single) {
+            $item = $items->first();
+            return $item ? self::flattenItem($item) : [];
+        }
 
-        return $single ? ($resolved->first() ?? []) : $resolved->values()->all();
+        if ($keyed) {
+            return $items->mapWithKeys(function ($item) {
+                return [$item->key => self::flattenItem($item)];
+            })->all();
+        }
+
+        return $items->map(fn($item) => self::flattenItem($item))->values()->all();
     }
 }

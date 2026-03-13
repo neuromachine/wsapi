@@ -58,9 +58,14 @@ class BlockItemPropertiesSeeder extends Seeder
             ['id' => 114, 'block_id' => 6, 'key' => 'subtitle', 'name' => 'Заголовок', 'type' => 'string', 'created_at' => now(), 'updated_at' => now()],
             ['id' => 115, 'block_id' => 6, 'key' => 'maintitle', 'name' => 'Слоган', 'type' => 'html', 'created_at' => now(), 'updated_at' => now()],
             ['id' => 116, 'block_id' => 6, 'key' => 'descr', 'name' => 'Описание', 'type' => 'text', 'created_at' => now(), 'updated_at' => now()],
-            ['id' => 117, 'block_id' => 7, 'key' => 'title', 'name' => 'Заголовок', 'type' => 'string', 'created_at' => now(), 'updated_at' => now()],
-            ['id' => 118, 'block_id' => 7, 'key' => 'subtitle', 'name' => 'Подзаголовок', 'type' => 'string', 'created_at' => now(), 'updated_at' => now()],
-            ['id' => 119, 'block_id' => 7, 'key' => 'items', 'name' => 'Входящие элементы секции', 'type' => 'json', 'created_at' => now(), 'updated_at' => now()],
+            ['id' => 117, 'block_id' => 6, 'key' => 'anchor', 'name' => 'Текст ссылки', 'type' => 'text', 'created_at' => now(), 'updated_at' => now()],
+            ['id' => 118, 'block_id' => 6, 'key' => 'link', 'name' => 'Адрес ссылки', 'type' => 'text', 'created_at' => now(), 'updated_at' => now()],
+            ['id' => 119, 'block_id' => 6, 'key' => 'body', 'name' => 'Содержимое html', 'type' => 'html', 'created_at' => now(), 'updated_at' => now()],
+            ['id' => 120, 'block_id' => 6, 'key' => 'image', 'name' => 'Изображение', 'type' => 'text', 'created_at' => now(), 'updated_at' => now()],
+            ['id' => 121, 'block_id' => 7, 'key' => 'title', 'name' => 'Заголовок', 'type' => 'string', 'created_at' => now(), 'updated_at' => now()],
+            ['id' => 122, 'block_id' => 7, 'key' => 'subtitle', 'name' => 'Подзаголовок', 'type' => 'string', 'created_at' => now(), 'updated_at' => now()],
+            ['id' => 123, 'block_id' => 7, 'key' => 'items', 'name' => 'Входящие элементы секции', 'type' => 'json', 'created_at' => now(), 'updated_at' => now()],
+            ['id' => 124, 'block_id' => 8, 'key' => 'content', 'name' => 'Содержимое в формате html', 'type' => 'html', 'created_at' => now(), 'updated_at' => now()],
         ]);
     }
 }

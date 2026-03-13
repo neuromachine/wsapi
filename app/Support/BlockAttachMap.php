@@ -9,10 +9,16 @@ final class BlockAttachMap
      * Заменить на чтение из БД (blocks.attach) когда колонка будет добавлена.
      */
     private const MAP = [
-        'descr_data' => ['attach' => 'content',  'single' => true],
-        'hero'       => ['attach' => 'sections', 'single' => true],
-        'services'   => ['attach' => 'sections', 'single' => true],
+        'descr_data'  => ['attach' => 'content',  'single' => true,  'keyed' => false],
+        'slide'       => ['attach' => 'sections', 'single' => false, 'keyed' => true],
+        'list'        => ['attach' => 'sections', 'single' => false, 'keyed' => true],
+        'simplehtml'  => ['attach' => 'sections', 'single' => true,  'keyed' => false],
     ];
+
+    public static function isKeyed(string $blockKey): bool
+    {
+        return self::MAP[$blockKey]['keyed'] ?? false;
+    }
 
     public static function isSingle(string $blockKey): bool
     {

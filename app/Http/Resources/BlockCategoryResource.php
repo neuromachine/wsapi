@@ -45,7 +45,8 @@ class BlockCategoryResource extends JsonResource
 
             $sections[$block->key] = EavContentResolver::resolve(
                 $block->items,
-                single: BlockAttachMap::isSingle($block->key)
+                single: BlockAttachMap::isSingle($block->key),
+                keyed:  BlockAttachMap::isKeyed($block->key)
             );
         }
 
