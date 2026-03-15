@@ -18,10 +18,12 @@ class DatabaseSeeder extends Seeder
         $this->call([
             BlocksMainCategoriesSeeder::class,
             BlocksServicesCategoriesSeeder::class,
+
             BlockSeeder::class,
+            BlockForPagesDataSeeder::class,
             BlockItemPropertiesSeeder::class,
             BlockItemsSeeder::class,
-            BlockItemPropertyValuesSeeder::class,
+            //BlockItemPropertyValuesSeeder::class,//Legacy
             BlocksForPortfolioPropertyValuesSeeder::class,
             ServicesBlockSeeder::class,
             KpBlockSeeder::class,

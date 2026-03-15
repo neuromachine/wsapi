@@ -12,7 +12,7 @@ class BlockItemPropertyValuesSeeder extends Seeder
     {
         // Очищаем таблицу значений
         DB::statement('SET FOREIGN_KEY_CHECKS=0;');
-        DB::table('block_item_property_values')->delete();
+        //DB::table('block_item_property_values')->delete();
         DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 
         $insert = [

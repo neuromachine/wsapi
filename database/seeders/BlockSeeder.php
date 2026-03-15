@@ -16,6 +16,8 @@ class BlockSeeder extends Seeder
 
         DB::statement('SET FOREIGN_KEY_CHECKS=0;');
         DB::table('blocks')->delete();
+        DB::table('block_items')->delete();
+        DB::table('block_item_property_values')->delete();
         DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 
         DB::table('blocks')->insert([
@@ -33,14 +35,6 @@ class BlockSeeder extends Seeder
                 'key' => 'works',
                 'name' => 'Работы',
                 'description' => 'Выполненные работы',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'id' => 3,
-                'key' => 'pages',
-                'name' => 'Страницы',
-                'description' => 'Структурные элементы - страницы и т.п.',
                 'created_at' => now(),
                 'updated_at' => now(),
             ],

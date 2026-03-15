@@ -14,7 +14,7 @@ class BlockItemPropertiesSeeder extends Seeder
     public function run(): void
     {
         DB::statement('SET FOREIGN_KEY_CHECKS=0;');
-        DB::table('block_item_properties')->delete();
+        //DB::table('block_item_properties')->delete();
         DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 
         DB::table('block_item_properties')->insert([
@@ -40,7 +40,7 @@ class BlockItemPropertiesSeeder extends Seeder
             ['id' => 29, 'block_id' => 2, 'key' => 'workdescr', 'name' => 'Описание работы', 'type' => 'html', 'created_at' => now(), 'updated_at' => now()],
             ['id' => 30, 'block_id' => 2, 'key' => 'targets', 'name' => 'Задачи', 'type' => 'html', 'created_at' => now(), 'updated_at' => now()],
             ['id' => 31, 'block_id' => 2, 'key' => 'tech', 'name' => 'Тех.', 'type' => 'html', 'created_at' => now(), 'updated_at' => now()],
-            ['id' => 50, 'block_id' => 3, 'key' => 'content', 'name' => 'Контент (HTML)', 'type' => 'html', 'created_at' => now(), 'updated_at' => now()],
+            //['id' => 50, 'block_id' => 3, 'key' => 'content', 'name' => 'Контент (HTML)', 'type' => 'html', 'created_at' => now(), 'updated_at' => now()],
             ['id' => 100, 'block_id' => 4, 'key' => 'title', 'name' => 'Заголовок', 'type' => 'string', 'created_at' => now(), 'updated_at' => now()],
             ['id' => 101, 'block_id' => 4, 'key' => 'content', 'name' => 'Контент (HTML)', 'type' => 'html', 'created_at' => now(), 'updated_at' => now()],
             ['id' => 102, 'block_id' => 4, 'key' => 'acticle', 'name' => 'Статья (HTML)', 'type' => 'html', 'created_at' => now(), 'updated_at' => now()],

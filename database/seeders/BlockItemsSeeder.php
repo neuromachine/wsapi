@@ -17,7 +17,7 @@ class BlockItemsSeeder extends Seeder
         DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 
 //        DB::table('block_items')->truncate();
-        DB::table('block_items')->delete();
+        //DB::table('block_items')->delete();
 
 
         /*
@@ -64,7 +64,7 @@ class BlockItemsSeeder extends Seeder
         ]);
 
 
-
+/*
         $rootCategoryP = DB::table('blocks_categories')
             ->where('key', 'pages')
             ->first();
@@ -77,6 +77,6 @@ class BlockItemsSeeder extends Seeder
             ['id' => 1000, 'block_id' => 3, 'category_id' => $rootCategoryP->id, 'key' => 'contacts', 'name' => 'Контакты', 'created_at' => now(), 'updated_at' => now()],
             ['id' => 1001, 'block_id' => 3, 'category_id' => $rootCategoryP->id, 'key' => 'about', 'name' => 'О нас', 'created_at' => now(), 'updated_at' => now()],
             ['id' => 1002, 'block_id' => 3, 'category_id' => $rootCategoryP->id, 'key' => 'price', 'name' => 'Цены', 'created_at' => now(), 'updated_at' => now()],
-        ]);
+        ]);*/
     }
 }
