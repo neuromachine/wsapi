@@ -8,11 +8,13 @@ final class BlockAttachMap
      * Блок → целевой раздел в ответе категории.
      * Заменить на чтение из БД (blocks.attach) когда колонка будет добавлена.
      */
+    // TODO: make system attach
     private const MAP = [
         'descr_data'  => ['attach' => 'content',  'single' => true,  'keyed' => false],
         'slide'       => ['attach' => 'sections', 'single' => false, 'keyed' => true],
         'list'        => ['attach' => 'sections', 'single' => false, 'keyed' => true],
         'simplehtml'  => ['attach' => 'sections', 'single' => true,  'keyed' => false],
+        'works'  => ['attach' => 'sections', 'single' => false,  'keyed' => true],
     ];
 
     public static function isKeyed(string $blockKey): bool

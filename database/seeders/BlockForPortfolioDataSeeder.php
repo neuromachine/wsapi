@@ -63,7 +63,9 @@ class BlockForPortfolioDataSeeder extends Seeder
                 ['id' => 22, 'block_id' => 2, 'key' => 'descr', 'name' => 'Краткое описание', 'type' => 'text', 'created_at' => now(), 'updated_at' => now()],
                 ['id' => 23, 'block_id' => 2, 'key' => 'content', 'name' => 'Контент (HTML)', 'type' => 'html', 'created_at' => now(), 'updated_at' => now()],
                 ['id' => 24, 'block_id' => 2, 'key' => 'thumb', 'name' => 'Миниатюра', 'type' => 'string', 'created_at' => now(), 'updated_at' => now()],
-                ['id' => 25, 'block_id' => 2, 'key' => 'image', 'name' => 'Изображение', 'type' => 'string', 'created_at' => now(), 'updated_at' => now()],
+                // Коллекция
+                ['id' => 25, 'block_id' => 2, 'key' => 'image', 'name' => 'Изображение2', 'type' => 'string', 'is_collection' => 1, 'created_at' => now(), 'updated_at' => now()],
+
                 ['id' => 26, 'block_id' => 2, 'key' => 'workclass', 'name' => 'Класс работ', 'type' => 'json', 'created_at' => now(), 'updated_at' => now()],
                 ['id' => 27, 'block_id' => 2, 'key' => 'price', 'name' => 'Цена', 'type' => 'number', 'created_at' => now(), 'updated_at' => now()],
                 ['id' => 28, 'block_id' => 2, 'key' => 'date', 'name' => 'Дата', 'type' => 'string', 'created_at' => now(), 'updated_at' => now()],
@@ -83,6 +85,7 @@ class BlockForPortfolioDataSeeder extends Seeder
                         [
                             'key' => $property['key'],
                             'name' => $property['name'],
+                            'is_collection' => !empty($property['is_collection']) && $property['is_collection'] === 1 ? 1 : 0,
                             'type' => $property['type'],
                         ]
                     );

@@ -17,11 +17,23 @@ class EavContentResolver
         };
     }
 
-    private static function flattenItem(mixed $item): array
+    private static function flattenItem($item): array
     {
-        return $item->propertyValues->mapWithKeys(function ($pv) {
-            return [$pv->property->key => self::castValue($pv->value, $pv->value_type)];
-        })->all();
+        $result = [];
+
+        foreach ($item->propertyValues as $pv) {
+            $key        = $pv->property->key;
+            $value      = self::castValue($pv->value, $pv->value_type);
+            $isCollection = (bool) $pv->property->is_collection;
+
+            if ($isCollection) {
+                $result[$key][] = $value;
+            } else {
+                $result[$key] = $value;
+            }
+        }
+
+        return $result;
     }
 
     /**
