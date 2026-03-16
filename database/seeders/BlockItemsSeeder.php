@@ -47,11 +47,11 @@ class BlockItemsSeeder extends Seeder
         }
 
         DB::table('block_items')->insert([
-            ['id' => 500, 'block_id' => 2, 'category_id' => $rootCategory->id, 'key' => 'shincenter', 'name' => 'Шинцентр.рф', 'created_at' => now(), 'updated_at' => now()],
-            ['id' => 501, 'block_id' => 2, 'category_id' => $rootCategory->id, 'key' => 'rayaray', 'name' => 'RayaRay', 'created_at' => now(), 'updated_at' => now()],
-            ['id' => 502, 'block_id' => 2, 'category_id' => $rootCategory->id, 'key' => 'sante', 'name' => 'Шале-сантэ', 'created_at' => now(), 'updated_at' => now()],
-            ['id' => 503, 'block_id' => 2, 'category_id' => $rootCategory->id, 'key' => 'mankor', 'name' => 'Mankor', 'created_at' => now(), 'updated_at' => now()],
-            ['id' => 504, 'block_id' => 2, 'category_id' => $rootCategory->id, 'key' => 'autobed', 'name' => 'Авто-Кроватка', 'created_at' => now(), 'updated_at' => now()],
+            //['id' => 500, 'block_id' => 2, 'category_id' => $rootCategory->id, 'key' => 'shincenter', 'name' => 'Шинцентр.рф', 'created_at' => now(), 'updated_at' => now()],
+            //['id' => 501, 'block_id' => 2, 'category_id' => $rootCategory->id, 'key' => 'rayaray', 'name' => 'RayaRay', 'created_at' => now(), 'updated_at' => now()],
+            //['id' => 502, 'block_id' => 2, 'category_id' => $rootCategory->id, 'key' => 'sante', 'name' => 'Шале-сантэ', 'created_at' => now(), 'updated_at' => now()],
+            //['id' => 503, 'block_id' => 2, 'category_id' => $rootCategory->id, 'key' => 'mankor', 'name' => 'Mankor', 'created_at' => now(), 'updated_at' => now()],
+            //['id' => 504, 'block_id' => 2, 'category_id' => $rootCategory->id, 'key' => 'autobed', 'name' => 'Авто-Кроватка', 'created_at' => now(), 'updated_at' => now()],
             ['id' => 505, 'block_id' => 2, 'category_id' => $rootCategory->id, 'key' => 'tff', 'name' => 'TFF', 'created_at' => now(), 'updated_at' => now()],
             ['id' => 506, 'block_id' => 2, 'category_id' => $rootCategory->id, 'key' => 'jolie', 'name' => 'Jolies Boutique', 'created_at' => now(), 'updated_at' => now()],
             ['id' => 507, 'block_id' => 2, 'category_id' => $rootCategory->id, 'key' => 'mia', 'name' => 'Миа мебель', 'created_at' => now(), 'updated_at' => now()],

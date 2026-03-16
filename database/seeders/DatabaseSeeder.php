@@ -21,10 +21,11 @@ class DatabaseSeeder extends Seeder
 
             BlockSeeder::class,
             BlockForPagesDataSeeder::class,
+            BlockForPortfolioDataSeeder::class,
             BlockItemPropertiesSeeder::class,
-            BlockItemsSeeder::class,
+//            BlockItemsSeeder::class,//Legacy
             //BlockItemPropertyValuesSeeder::class,//Legacy
-            BlocksForPortfolioPropertyValuesSeeder::class,
+//            BlocksForPortfolioPropertyValuesSeeder::class, //Legacy
             ServicesBlockSeeder::class,
             KpBlockSeeder::class,
             BlockItemsForCategoriesDesrDataSeeder::class,
