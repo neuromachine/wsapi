@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\FormController;
 
 Route::prefix('{locale}')
     ->where(['locale' => '[a-zA-Z]{2}'])
+    ->middleware(\App\Http\Middleware\SetLocale::class)
     ->group(function () {
         Route::prefix('blocks/blocks')
             ->controller(BlockController::class)
