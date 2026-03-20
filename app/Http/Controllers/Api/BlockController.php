@@ -19,7 +19,7 @@ class BlockController extends Controller
     public function index(string $locale,string $slug)
     {
         return new BlockResource(
-            $this->repo->getBlock($slug)
+            $this->repo->getBlock($locale,$slug)
         );
     }
 

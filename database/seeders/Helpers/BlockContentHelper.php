@@ -6,9 +6,17 @@ use Illuminate\Support\Collection;
 
 class BlockContentHelper
 {
-    public static function getBlockKeys(string $category): Collection
+    public static function getBlockKeys(string $path, string $type = 'category'): Collection
     {
-        $directory = "cat". '/' . $category;
+        if($type == 'category')
+        {
+            $directory = "cat". '/' . $path;
+        }
+        else
+        {
+            $directory = $path;
+        }
+
         if (! Storage::disk('blocks')->exists($directory)) {
             throw new \InvalidArgumentException(
                 "Block category directory not found: [{$directory}]"
@@ -20,11 +28,19 @@ class BlockContentHelper
             ->values();
     }
 
-    public static function getBlockContent(string $category, string $key): array
+    public static function getBlockContent(string $path, string $key , string $type = 'category'): array
     {
-        $path = "cat". '/' . $category . '/' . $key . '.json';
+
+        $file = $key . '.json';
+        if($type == 'category')
+        {
+            $path = "cat". '/' . $path;
+        }
+        $path = $path.'/'.$file;
+
 
         if (! Storage::disk('blocks')->exists($path)) {
+            if($type === 'items_descr_data') return [];
             throw new \RuntimeException("Block file not found: [{$path}]");
         }
 

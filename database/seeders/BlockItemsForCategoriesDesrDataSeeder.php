@@ -18,21 +18,25 @@ class BlockItemsForCategoriesDesrDataSeeder extends Seeder
         DB::statement('SET FOREIGN_KEY_CHECKS=0;');
         DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 
-        $block = DB::table('blocks')
-            ->where('key', 'descr_data')
-            ->first();
-        if (!$block) {
-            Log::error("Block with key not found, abort seeding");
-            return;
-        }
 
-        $blockId = $block->id;
 
-        DB::transaction(function () use ($blockId) {
+        DB::transaction(function () {
+
+            $block = DB::table('blocks')
+                ->where('key', 'descr_data')
+                ->first();
+            if (!$block) {
+                Log::error("Block with key not found, abort seeding");
+                return;
+            }
+
+            $blockId = $block->id;
+
             $categories = DB::table('blocks_categories')->get();
+
             // TODO: check to empty cat data
             foreach ($categories as $category) {
-                $item = DB::table('block_items')
+                DB::table('block_items')
                     ->updateOrInsert(
                         [
                             'block_id'    => $blockId,
@@ -58,6 +62,63 @@ class BlockItemsForCategoriesDesrDataSeeder extends Seeder
 
                 foreach ($sections as $section) {
 
+
+                    $data = BlockContentHelper::getBlockContent('blocks/items/'.$block->key, $category->key,'items_descr_data');
+
+                    if(!empty($data))
+                    {
+                        // TODO: change
+                        if($section !== 'ru')
+                        {
+                            $props = $data[$section]['properties'] ?? [];
+                        }
+                        else
+                        {
+                            $props = $data['properties'] ?? [];
+                        }
+
+                        // TODO: check data
+
+                        foreach ($props as $propKey => $propValue) {
+
+                            $propertyId = DB::table('block_item_properties')
+                                ->where('block_id', $block->id)
+                                ->where('key', $propKey)
+                                ->value('id');
+
+                            if (!$propertyId) {
+
+                                $message = "Property {$propKey} not found for Block ID={$block->id}, continue";
+                                Log::warning($message);
+                                $this->command->error($message);
+                            }
+
+                            $valueType = is_array($propValue) ? 'json' : 'string';
+
+//                            dd($itemId,$propertyId,$section,$propValue,$valueType);
+                            $this->command->info("Seeding property id: {$propertyId} for item with id: {$itemId}, at section: {$section}");
+
+                            $result = DB::table('block_item_property_values')
+                                ->updateOrInsert(
+                                    ['item_id'     => $itemId, 'property_id' => $propertyId,'locale' => $section],
+                                    [
+                                        'value'      => is_array($propValue) ? json_encode($propValue) : $propValue,
+                                        'value_type'      => $valueType,
+                                        'created_at' => now(),
+                                        'updated_at' => now(),
+                                    ]
+                                );
+
+                            //dd($result);
+
+                        }
+
+                        continue;
+                    }
+
+                    //dd($category->key);
+
+                    /**/
                     $catJsonData = BlockContentHelper::getCatData($category->key,$section);
 
                     DB::table('block_item_property_values')
@@ -100,6 +161,7 @@ class BlockItemsForCategoriesDesrDataSeeder extends Seeder
                                 'updated_at' => now(),
                             ]
                         );
+
                 }
             }
         });

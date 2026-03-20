@@ -21,6 +21,7 @@ class DatabaseSeeder extends Seeder
 
             BlockSeeder::class,
             BlockForPagesDataSeeder::class,
+
             BlockForPortfolioDataSeeder::class,
             BlockItemPropertiesSeeder::class,
 //            BlockItemsSeeder::class,//Legacy
@@ -30,6 +31,8 @@ class DatabaseSeeder extends Seeder
             KpBlockSeeder::class,
             BlockItemsForCategoriesDesrDataSeeder::class,
             BlocksForMainSectionsSeeder::class,
+
+            BlocksForNavigationSeeder::class,
         ]);
 
 /*        User::factory()->create([
