@@ -111,7 +111,14 @@ class BlockCategoryResource extends JsonResource
 //            dd(EavContentResolver::resolve($subCat->items, single: false));
 
 
-            $result[] = EavContentResolver::resolve($subCat->items, single: true);
+            $native = array(
+                'id' => $subCat->id,
+                'slug' => $subCat->key,
+                'childs' => []
+            );
+
+
+            $result[] = array_merge($native,EavContentResolver::resolve($subCat->items, single: true));
         }
 
         return $result;
