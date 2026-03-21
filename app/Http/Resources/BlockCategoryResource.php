@@ -60,6 +60,8 @@ class BlockCategoryResource extends JsonResource
             return [];
         }
 
+        $result = [];
+
         foreach ($this->children as $category) {
 
             $newCat = BlocksCategories::where('key', $category->key)->firstOrFail();
