@@ -18,6 +18,7 @@ class DatabaseSeeder extends Seeder
         $this->call([
             BlocksMainCategoriesSeeder::class,
             BlocksServicesCategoriesSeeder::class,
+            BlocksCategoriesSeeder::class,
 
             BlockSeeder::class,
             BlockForPagesDataSeeder::class,
