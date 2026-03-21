@@ -32,6 +32,46 @@ class BlockItemsForCategoriesDesrDataSeeder extends Seeder
 
             $blockId = $block->id;
 
+            // TODO: заменить на сбор всех возможных вариантов из json
+            // TODO: заменить принцип назначения идентификатора
+            $block_properties = [
+            ['id' => 110, 'block_id' => $block->id, 'key' => 'title', 'name' => 'Заголовок', 'type' => 'string', 'created_at' => now(), 'updated_at' => now()],
+            ['id' => 111, 'block_id' => $block->id, 'key' => 'descr', 'name' => 'Краткое описание', 'type' => 'text', 'created_at' => now(), 'updated_at' => now()],
+            ['id' => 112, 'block_id' => $block->id, 'key' => 'content', 'name' => 'Контент (HTML)', 'type' => 'html', 'created_at' => now(), 'updated_at' => now()],
+            ['id' => 113, 'block_id' => $block->id, 'key' => 'metadata', 'name' => 'Json с массивом используемым в целях продвижения', 'type' => 'json', 'created_at' => now(), 'updated_at' => now()],
+                ['id' => 1000,'block_id' => $block->id, 'key' => 'priority', 'name' => 'Приоритет', 'type' => 'number', 'created_at' => now(), 'updated_at' => now()],
+            ];
+
+            foreach ($block_properties as $property) {
+
+                DB::table('block_item_properties')
+                    ->updateOrInsert(
+                        [
+                            'id'=>$property['id'],
+                            'block_id' => $block->id,
+                            'key' => $property['key'],
+                        ],
+                        [
+                            'name' => $property['name'],
+                            'is_collection' => !empty($property['is_collection']) && $property['is_collection'] === 1 ? 1 : 0,
+                            'type' => $property['type'],
+                        ]
+                    );
+
+                $dbProperty = DB::table('block_item_properties')
+                    ->where('block_id', $block->id)
+                    ->where('key', $property['key'])
+                    ->first();
+
+                if (!$dbProperty->id) {
+                    $message = "Property {$property['key']} not found for Block ID={$block->id}, abort seeding";
+                    Log::warning($message);
+                    $this->command->error($message);
+                    return;
+                }
+                $this->command->info("Property {$dbProperty->id} with key: {$dbProperty->key} was created or updated");
+            }
+
             $categories = DB::table('blocks_categories')->get();
 
             // TODO: check to empty cat data
@@ -51,7 +91,6 @@ class BlockItemsForCategoriesDesrDataSeeder extends Seeder
                         ]
                     );
 
-                // Получаем ID только что вставленной (или существующей) позиции
                 $itemId = DB::table('block_items')
                     ->where('block_id', $blockId)
                     ->where('key', $category->key)
@@ -87,6 +126,18 @@ class BlockItemsForCategoriesDesrDataSeeder extends Seeder
                                 ->value('id');
 
                             if (!$propertyId) {
+
+                                // TODO: создавать поля автоматически
+                                /*
+                                dd($propKey,$propValue);
+
+                                DB::table('block_item_properties')->insert(
+                                    [
+                                        'key'    => ,
+                                        'key'    => ,
+                                        'key'    => ,
+                                    ]
+                                );*/
 
                                 $message = "Property {$propKey} not found for Block ID={$block->id}, continue";
                                 Log::warning($message);
