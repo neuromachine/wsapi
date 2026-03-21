@@ -67,9 +67,6 @@ class BlockCategoryResource extends JsonResource
             $newCat = BlocksCategories::where('key', $category->key)->firstOrFail();
 
             $subCat =  BlocksCategories::with([
-
-                //'blocks',
-
                 'items' => function ($q) use ($locale,$newCat) {
                     $q->where('category_id', $newCat->id)
                         ->whereHas('propertyValues', function ($sub) use ($locale) {
@@ -79,39 +76,9 @@ class BlockCategoryResource extends JsonResource
                 'items.propertyValues' => function ($q) use ($locale) {
                     $q->where('locale', $locale);
                 },
-
-                /*
-                'blocks.items' => function ($q) use ($locale, $newCat) {
-                    $q->where('category_id', $newCat->id)
-                        ->whereHas('propertyValues', function ($sub) use ($locale) {
-                            $sub->where('locale', $locale);
-                        });
-                },
-                */
-
-                /*
-                'blocks.items.propertyValues' => function ($q) use ($locale) {
-                    $q->where('locale', $locale);
-                },
-                */
-
-                //'blocks.items.propertyValues.property',
-
-
             ])
                 ->where('id', $category->id)
                 ->first();
-
-
-            //dd($subCat);
-
-/*
-            $descrBlock = $subCat->blocks->first(
-                fn($b) => BlockAttachMap::is($b->key, 'content')
-            );*/
-
-//            dd(EavContentResolver::resolve($subCat->items, single: false));
-
 
             $native = array(
                 'id' => $subCat->id,
@@ -119,9 +86,17 @@ class BlockCategoryResource extends JsonResource
                 'childs' => []
             );
 
-
             $result[] = array_merge($native,EavContentResolver::resolve($subCat->items, single: true));
         }
+
+        // TODO: sort elements in db ))
+        usort($result, function ($a, $b) {
+            if(empty($a['priority']) && empty($b['priority'])) return -1;
+            if(!empty($a['priority']) && empty($b['priority'])) return 0;
+            if(empty($a['priority']) && !empty($b['priority'])) return 1;
+            if(!empty($a['priority']) && !empty($b['priority'])) return intval($a['priority']) <=> intval($b['priority']);
+            return 0;
+        });
 
         return $result;
     }
