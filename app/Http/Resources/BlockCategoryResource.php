@@ -49,7 +49,34 @@ class BlockCategoryResource extends JsonResource
                 single: BlockAttachMap::isSingle($block->key),
                 keyed:  BlockAttachMap::isKeyed($block->key)
             );
+
+            //dd($sections[$block->key]);
+
+            // TODO: sort elements in db )) // GROK
+            uasort($sections[$block->key], function ($a, $b) {
+                // Приводим к одному типу для корректного сравнения
+                $prioA = isset($a['priority']) && $a['priority'] !== '' ? (int)$a['priority'] : null;
+                $prioB = isset($b['priority']) && $b['priority'] !== '' ? (int)$b['priority'] : null;
+
+                if ($prioA === null && $prioB === null) {
+                    return 0;                    // оба без приоритета — считаем равными
+                }
+                if ($prioA === null) {
+                    return 1;                    // a без приоритета → идёт после b
+                }
+                if ($prioB === null) {
+                    return -1;                   // b без приоритета → a идёт раньше
+                }
+
+                // оба имеют приоритет — сравниваем численно
+                return $prioA <=> $prioB;
+            });
+
+            //dd($sections[$block->key]);
+
         }
+
+
 
         return $sections;
     }

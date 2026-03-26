@@ -72,6 +72,7 @@ class BlockForPortfolioDataSeeder extends Seeder
                 ['id' => 29, 'block_id' => 2, 'key' => 'workdescr', 'name' => 'Описание работы', 'type' => 'html', 'created_at' => now(), 'updated_at' => now()],
                 ['id' => 30, 'block_id' => 2, 'key' => 'targets', 'name' => 'Задачи', 'type' => 'html', 'created_at' => now(), 'updated_at' => now()],
                 ['id' => 31, 'block_id' => 2, 'key' => 'tech', 'name' => 'Тех.', 'type' => 'html', 'created_at' => now(), 'updated_at' => now()],
+                ['id' => 32, 'block_id' => 2, 'key' => 'priority', 'name' => 'Приоритет', 'type' => 'number', 'created_at' => now(), 'updated_at' => now()],
             ];
 
             foreach ($block_properties as $property) {
