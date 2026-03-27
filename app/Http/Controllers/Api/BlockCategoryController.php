@@ -12,6 +12,7 @@ use App\Http\Resources\BlockItemResource;
 
 use App\Http\Resources\BlockCategoryStructureResource;
 
+
 class BlockCategoryController extends Controller
 {
     protected BlockCategoryRepository $repo;
@@ -22,21 +23,21 @@ class BlockCategoryController extends Controller
         $this->repo = $repo;
     }
 
-    public function index(string $slug)
+    public function index(string $locale, string $slug): BlockCategoryResource
     {
-        //return dd($this->repo->getCategory($slug));
-
         return new BlockCategoryResource(
-            $this->repo->getCategory($slug)
+            $this->repo->getCategory($locale,$slug)
         );
     }
 
-    public function structure(?string $slug = null)
+    public function structure(string $locale,?string $slug = null)
     {
-        return new BlockCategoryStructureResource($this->repo->getCategoriesRecursive($slug));
+        return new BlockCategoryStructureResource(
+            $this->repo->getCategoriesRecursive($locale,$slug)
+        );
     }
 
-    public function offers(string $slug)
+    public function offers(string $locale,string $slug)
     {
         $category = BlocksCategories::where('key', $slug)->firstOrFail();
         $block = Block::where('key', 'offers')->firstOrFail();

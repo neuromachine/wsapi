@@ -16,10 +16,10 @@ class BlockItemController extends Controller
         $this->repo = $repo;
     }
 
-    public function index(string $slug)
+    public function index(string $locale,string $slug)
     {
         return new BlockItemResource(
-            $this->repo->getItem($slug)
+            $this->repo->getItem($locale,$slug)
         );
     }
 

@@ -66,7 +66,7 @@ class FormSubmitRequest extends FormRequest
                         }
 
                         // Иначе — не подходит под ни один формат
-                        $fail('Поле ' . $attribute . ' должно быть email, телефонным номером, Telegram-ником или ссылкой.');
+                        $fail(trans('forms.mix_invalid', ['attribute' => $attribute]));
                     },
                 ],
             ],
@@ -85,7 +85,7 @@ class FormSubmitRequest extends FormRequest
     {
         throw new HttpResponseException(
             response()->json([
-                'message' => 'Пожалуйста проверьте заполнение формы',
+                'message' => trans('forms.check_form'),
                 'errors' => $validator->errors()->toArray(),
             ], 422)
         );
@@ -94,9 +94,9 @@ class FormSubmitRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'name.required' => 'Поле name обязательно',
-            'message.required' => 'Поле message обязательно',
-            'email.email' => 'Неверный формат email',
+            'name.required'    => trans('forms.name.required'),
+            'message.required' => trans('forms.message.required'),
+            'email.email'      => trans('forms.email.email'),
         ];
     }
 }

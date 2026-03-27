@@ -123,4 +123,7 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+    'supported_locales' => ['ru', 'en'],
+    'default_locale' => 'ru',
+
 ];

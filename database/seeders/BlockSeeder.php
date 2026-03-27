@@ -16,6 +16,8 @@ class BlockSeeder extends Seeder
 
         DB::statement('SET FOREIGN_KEY_CHECKS=0;');
         DB::table('blocks')->delete();
+        DB::table('block_items')->delete();
+        DB::table('block_item_property_values')->delete();
         DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 
         DB::table('blocks')->insert([
@@ -28,7 +30,7 @@ class BlockSeeder extends Seeder
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
-            [
+/*            [
                 'id' => 2,
                 'key' => 'works',
                 'name' => 'Работы',
@@ -37,18 +39,42 @@ class BlockSeeder extends Seeder
                 'updated_at' => now(),
             ],
             [
-                'id' => 3,
-                'key' => 'pages',
-                'name' => 'Страницы',
-                'description' => 'Структурные элементы - страницы и т.п.',
+                'id' => 4,
+                'key' => 'ind_offers',
+                'name' => 'Коммерческие предложения',
+                'description' => 'КП для разных секторов',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],*/
+            [
+                'id' => 5,
+                'key' => 'descr_data',
+                'name' => 'Описательные данные',
+                'description' => 'Непосредственное наполнение страниц - контент области, мета и т.п',
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
             [
-                'id' => 4,
-                'key' => 'kp',
-                'name' => 'Коммерческие предложения',
-                'description' => 'КП для разных секторов',
+                'id' => 6,
+                'key' => 'slide',
+                'name' => 'Слайд',
+                'description' => 'Набор для организации слайд шоу',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'id' => 7,
+                'key' => 'list',
+                'name' => 'Список',
+                'description' => 'Список заголовок и набор json для вывода позиций',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'id' => 8,
+                'key' => 'simplehtml',
+                'name' => 'Простой html',
+                'description' => 'минимальный блок содержащий любой html',
                 'created_at' => now(),
                 'updated_at' => now(),
             ],

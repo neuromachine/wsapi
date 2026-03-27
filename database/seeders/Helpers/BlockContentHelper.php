@@ -1,9 +1,58 @@
 <?php
 
 namespace Database\Seeders\Helpers;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Collection;
 
 class BlockContentHelper
 {
+    public static function getBlockKeys(string $path, string $type = 'category'): Collection
+    {
+        if($type == 'category')
+        {
+            $directory = "cat". '/' . $path;
+        }
+        else
+        {
+            $directory = $path;
+        }
+
+        if (! Storage::disk('blocks')->exists($directory)) {
+            throw new \InvalidArgumentException(
+                "Block category directory not found: [{$directory}]"
+            );
+        }
+        return collect(Storage::disk('blocks')->files($directory))
+            ->filter(fn(string $path) => str_ends_with($path, '.json'))
+            ->map(fn(string $path) => pathinfo($path, PATHINFO_FILENAME))
+            ->values();
+    }
+
+    public static function getBlockContent(string $path, string $key , string $type = 'category'): array
+    {
+
+        $file = $key . '.json';
+        if($type == 'category')
+        {
+            $path = "cat". '/' . $path;
+        }
+        $path = $path.'/'.$file;
+
+
+        if (! Storage::disk('blocks')->exists($path)) {
+            if($type === 'items_descr_data') return [];
+            throw new \RuntimeException("Block file not found: [{$path}]");
+        }
+
+        $content = json_decode(
+            Storage::disk('blocks')->get($path),
+            associative: true,
+            flags: JSON_THROW_ON_ERROR
+        );
+
+        return $content;
+    }
+
     public static function getData(string $key): array
     {
         $defaults = [
@@ -21,16 +70,21 @@ class BlockContentHelper
                 ['title' => 'Коммерческое предложение', 'path' => 'kp.pdf']
             ],
             'date' => '-',
+            'locale' => 'ru',
         ];
 
         $jsonPath = storage_path("app/blocks/{$key}.json");
+
+
         if (!file_exists($jsonPath)) {
             $defaults['descr'] = "Файл {$key}.json не найден";
             return $defaults;
         }
 
         $raw = file_get_contents($jsonPath);
+
         $data = json_decode($raw, true);
+
         if (json_last_error() !== JSON_ERROR_NONE || !is_array($data)) {
             $defaults['descr'] = 'Ошибка формата JSON';
             return $defaults;
@@ -44,7 +98,28 @@ class BlockContentHelper
         return self::getData($key)['content']['body'];
     }
 
-    public static function getCatData(string $key): array
+    public static function getEntityData(string $filename): array
+    {
+        $defaults = [];
+
+        $jsonPath = storage_path("app/blocks/{$filename}.json");
+        if (!file_exists($jsonPath)) {
+            return $defaults;
+        }
+
+        $raw = file_get_contents($jsonPath);
+        $data = json_decode($raw, true);
+
+        if (json_last_error() !== JSON_ERROR_NONE || !is_array($data)) {
+            return $defaults;
+        }
+
+        if(!empty($data['items'])) return $data['items'];
+
+        return $defaults;
+    }
+
+    public static function getCatData(string $key, string $section = 'ru'): array
     {
         $defaults = [
             'descr' => 'Раздел в стадии наполнения',
@@ -59,9 +134,15 @@ class BlockContentHelper
 
         $raw = file_get_contents($jsonPath);
         $data = json_decode($raw, true);
+
         if (json_last_error() !== JSON_ERROR_NONE || !is_array($data)) {
             $defaults['descr'] = 'Ошибка формата JSON';
             return $defaults;
+        }
+
+        if(!empty($data[$section]))
+        {
+            return array_replace_recursive($defaults, $data[$section]);
         }
 
         return array_replace_recursive($defaults, $data);
