@@ -56,6 +56,10 @@ class BlockForPagesDataSeeder extends Seeder
             // TODO: заменить принцип назначения идентификатора
             $block_properties = [
                 ['id' => 50, 'key' => 'content', 'name' => 'Контент (HTML)', 'type' => 'html'],
+                ['id' => 51, 'key' => 'title', 'name' => 'Заголовок', 'type' => 'string'],
+                ['id' => 52, 'key' => 'descr', 'name' => 'Краткое описание', 'type' => 'text'],
+                ['id' => 53, 'key' => 'metadata', 'name' => 'Json с массивом используемым в целях продвижения', 'type' => 'json'],
+                ['id' => 54, 'key' => 'priority', 'name' => 'Приоритетя', 'type' => 'number'],
             ];
 
             foreach ($block_properties as $key => $property) {
@@ -70,6 +74,7 @@ class BlockForPagesDataSeeder extends Seeder
                             'key' => $property['key'],
                             'name' => $property['name'],
                             'type' => $property['type'],
+                            // TODO: is collection
                         ]
                     );
 
@@ -99,14 +104,14 @@ class BlockForPagesDataSeeder extends Seeder
                 return;
             }
 
-            $itemsKeys = BlockContentHelper::getBlockKeys($category->key);
+            $itemsKeys = BlockContentHelper::getBlockKeys('blocks/items/'.$category->key, 'pages');
 
             foreach ($itemsKeys as $itemKey) {
                 $this->command->info("Find file wiith Item data: {$itemKey}, will try to write");
 
-                $data = BlockContentHelper::getBlockContent($category->key, $itemKey);
+                $data = BlockContentHelper::getBlockContent('blocks/items/'.$category->key, $itemKey,'pages');
 
-                if(empty($data['name']) || empty($data['key']) || empty($data['block']))
+                if(empty($data['name']) || empty($data['key']) || empty($data['block']) || empty($data['properties']) || !is_array($data['properties']))
                 {
                     $message = "Item with key {$itemKey}, do not have fill data - continue";
                     Log::warning($message);
@@ -131,6 +136,7 @@ class BlockForPagesDataSeeder extends Seeder
                         [
                             'name'       => $data['name'],
                             'key'       => $data['key'],
+                            // TODO: description field
                             'created_at' => now(),
                             'updated_at' => now(),
                         ]
