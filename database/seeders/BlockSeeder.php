@@ -37,7 +37,7 @@ class BlockSeeder extends Seeder
                 'description' => 'Выполненные работы',
                 'created_at' => now(),
                 'updated_at' => now(),
-            ],*/
+            ],
             [
                 'id' => 4,
                 'key' => 'ind_offers',
@@ -45,7 +45,7 @@ class BlockSeeder extends Seeder
                 'description' => 'КП для разных секторов',
                 'created_at' => now(),
                 'updated_at' => now(),
-            ],
+            ],*/
             [
                 'id' => 5,
                 'key' => 'descr_data',
