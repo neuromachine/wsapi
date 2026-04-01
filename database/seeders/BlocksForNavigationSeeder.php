@@ -21,7 +21,7 @@ class BlocksForNavigationSeeder extends Seeder
         DB::transaction(function () {
 
             $settings['block']['key']='navigation';
-            $settings['sections'] = ['ru','en'];
+            $settings['sections'] = ['ru','en','vi']; // TODO: take scopes from config
 
             $blockJson = BlockContentHelper::getBlockContent('blocks', $settings['block']['key'],'block');
 

@@ -22,7 +22,7 @@ class BlockForPagesDataSeeder extends Seeder
             'name' => 'Страницы',
             'description' => 'Структурные элементы - страницы и т.п.',
         ));
-        define("SECTIONS", ['ru','en']);
+        define("SECTIONS", ['ru','en','vi']); // TODO: take scopes from config
         define("CATEGORY_KEY", 'pages');
 
 

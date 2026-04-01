@@ -97,7 +97,7 @@ class BlockItemsForCategoriesDesrDataSeeder extends Seeder
                     ->value('id');
 
 
-                $sections = ['ru','en'];
+                $sections = ['ru','en','vi']; // TODO: take scopes from config
 
                 foreach ($sections as $section) {
 

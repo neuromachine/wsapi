@@ -21,7 +21,7 @@ class BlocksForMainSectionsSeeder extends Seeder
 
         DB::transaction(function () {
 
-            $sections = ['ru','en'];
+            $sections = ['ru','en','vi']; // TODO: take scopes from config
             $categoryKey = 'main';
 
             $cat = DB::table('blocks_categories')
