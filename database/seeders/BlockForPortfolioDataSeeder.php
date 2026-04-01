@@ -29,7 +29,7 @@ class BlockForPortfolioDataSeeder extends Seeder
                 'name' => 'Работы',
                 'description' => 'Выполненные работы',
             );
-            $settings['sections'] = ['ru','en'];
+            $settings['sections'] = ['ru','en','vi']; // TODO: take scopes from config
             $settings['category_key'] = 'portfolio';
 
             // TODO: заменить на поступающий из json

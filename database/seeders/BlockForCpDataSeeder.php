@@ -25,7 +25,7 @@ class BlockForCpDataSeeder extends Seeder
                 'name' => 'Коммерческие предложения',
                 'description' => 'КП для разных секторов',
             );
-            $settings['sections'] = ['ru','en'];
+            $settings['sections'] = ['ru','en','vi']; // TODO: take scopes from config
             $settings['category_key'] = 'ind_offers';
 
             // TODO: заменить на поступающий из json
