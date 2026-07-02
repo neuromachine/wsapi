@@ -53,6 +53,15 @@ class BlockCategoryRepository
                     });
                 });
             },
+            'children.items' => function ($q) use ($locale) {
+                $q->whereHas('propertyValues', function ($sub) use ($locale) {
+                    $sub->where('locale', $locale);
+                });
+            },
+            'children.items.propertyValues' => function ($q) use ($locale) {
+                $q->where('locale', $locale);
+            },
+            'children.items.propertyValues.property',
             /*
             'childrenRecursive',             // вложенные категории TODO: N+1
 

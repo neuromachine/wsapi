@@ -6,7 +6,6 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use App\Support\EavContentResolver;
 use App\Support\BlockAttachMap;
-use App\Models\BlocksCategories;
 
 class BlockCategoryResource extends JsonResource
 {
@@ -90,30 +89,17 @@ class BlockCategoryResource extends JsonResource
         $result = [];
 
         foreach ($this->children as $category) {
-
-            $newCat = BlocksCategories::where('key', $category->key)->firstOrFail();
-
-            $subCat =  BlocksCategories::with([
-                'items' => function ($q) use ($locale,$newCat) {
-                    $q->where('category_id', $newCat->id)
-                        ->whereHas('propertyValues', function ($sub) use ($locale) {
-                            $sub->where('locale', $locale);
-                        });
-                },
-                'items.propertyValues' => function ($q) use ($locale) {
-                    $q->where('locale', $locale);
-                },
-            ])
-                ->where('id', $category->id)
-                ->first();
-
             $native = array(
-                'id' => $subCat->id,
-                'slug' => $subCat->key,
+                'id' => $category->id,
+                'slug' => $category->key,
                 'childs' => []
             );
 
-            $result[] = array_merge($native,EavContentResolver::resolve($subCat->items, single: true));
+            if ($category->relationLoaded('items')) {
+                $result[] = array_merge($native, EavContentResolver::resolve($category->items, single: true));
+            } else {
+                $result[] = $native;
+            }
         }
 
         // TODO: sort elements in db ))
