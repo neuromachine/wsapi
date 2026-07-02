@@ -1,199 +1,309 @@
-# TASK-BE-005 — Backend Contract Safety Net and Layer Boundary Hardening
+# TASK-BE-005 — Backend Contract Safety Net
 
 ## Status
 
-Implementation task.
+Immediate next backend task after `TASK-BE-004`.
+
+## Type
+
+Testing / contract safety net / regression foundation.
 
 ## Priority
 
-High.
+P0 — must be completed before further backend structural refactoring.
 
-## Relation to previous tasks
+## Core Principle
 
-This task is based on the architecture state after:
+Write the safety net before continuing architecture changes.
+
+Do not refactor production architecture in this task.
+Do not fix `BlockCategoryResource::attributesToArray()` yet.
+Do not refactor `BlockCategoryController::offers()` yet.
+Do not remove duplicate EAV model relationships yet.
+
+This task exists to make later refactoring safe.
+
+---
+
+## Source Context
+
+This task is based on the completed report:
 
 ```text
-TASK-BE-002 — read-side refactor
-TASK-BE-003 — seed/import refactor
-TASK-BE-004 — backend audit / calibration
+.agents/reports/AUDIT-BE-004-backend-architecture-audit.md
 ```
 
-If TASK-BE-004 has not been executed yet, run this task with extra caution and treat its first stage as a mini-audit.
-
-## Main conclusion behind this task
-
-The project has already started moving in the right architectural direction:
+The audit identified these relevant risks:
 
 ```text
-- CategoryPayloadAssembler was introduced.
-- BlockCategoryResource became thinner.
-- BlockResource became more explicit.
-- ImportHelper reduced duplicated seeder code.
+P0 — zero API contract tests
+P1 — duplicated route registration / API bootstrap uncertainty
+P1 — BlockCategoryResource uses attributesToArray()
+P2 — BlockCategoryController::offers() bypasses Repository/Resource boundaries
+P2 — BlockItem has duplicate property value relations
 ```
 
-The next highest-leverage weakness is not another broad refactor.
-The next highest-leverage weakness is the lack of executable regression protection around the backend API contracts and the remaining visible layer-boundary violations.
+`TASK-BE-004` explicitly recommends that structural changes be halted until this safety net is built.
 
-Before deeper backend restructuring, add a contract safety net that future code agents can run.
+---
 
-## Core principle
+## Main Goal
+
+Create automated backend tests that lock down the current public API contracts for the Blocks/EAV read-side before any further refactoring.
+
+The tests must make the following future changes safer:
 
 ```text
-tests and verifiable contracts before more architecture changes
+- route/bootstrap cleanup
+- offers endpoint boundary refactor
+- explicit Resource serialization hardening
+- EAV relationship cleanup
+- later frontend contract handoff
 ```
 
-Do not continue refactoring the content platform without tests that protect the current API response shape.
+---
 
-## Goals
+## Primary Contract Targets
 
-### Primary goals
+### 1. Standard category endpoint
+
+Control endpoint:
 
 ```text
-1. Add executable backend tests for the critical Blocks API contract.
-2. Add focused unit tests for support-layer behavior: EavContentResolver and BlockAttachMap.
-3. Add minimal architecture boundary checks so Resources and Controllers do not drift back into hidden SQL/query logic.
-4. Make test fixtures independent from production seeders where possible.
-5. Confirm actual API route prefix behavior through route-list or tests.
+GET /en/blocks/categories/services
 ```
 
-### Secondary goal
+This is the main Vue-facing Services page endpoint.
 
-If and only if the safety net is in place and passing, perform one small boundary hardening:
+It currently follows Laravel Resource envelope conventions:
 
 ```text
-Move BlockCategoryController::offers() query logic into BlockCategoryRepository or a small dedicated read-side collaborator.
+response.data.data
 ```
 
-This secondary goal may be postponed if it increases risk.
-
-## Why this task is needed
-
-Current observed weaknesses:
+The test must lock down the presence and general shape of:
 
 ```text
-- tests/Feature/ExampleTest.php appears to be a default skeleton test.
-- tests/Unit/ExampleTest.php appears to be a default skeleton test.
-- tests/Pest.php appears to have RefreshDatabase commented out globally.
-- composer.json includes Pest and Laravel Pint, but the project does not yet appear to use them as real backend quality gates.
-- No contract test currently protects GET /en/blocks/categories/services or GET /api/en/blocks/categories/services.
-- BlockCategoryController::offers() appears to perform direct queries in the controller.
-- Route registration may be duplicated through both bootstrap/app.php and AppServiceProvider.
+json root:
+  data
+
+inside data:
+  id
+  key
+  name
+  description
+  content
+  parent_id
+  created_at
+  updated_at
+  section
+  sections
+  subcategories
+  blocks
+  children
 ```
 
-Do not treat these as accusations.
-Treat them as audit hypotheses to verify in the working repository.
-
-## Community / Laravel baseline
-
-Use current Laravel practice as a reference point:
+The test must also assert that legacy/current compatibility keys are preserved:
 
 ```text
-- API Resources should transform models and relationships into JSON, not compensate for missing data preparation.
-- The service container / dependency injection should be used for non-trivial dependencies and testability.
-- Laravel HTTP tests are the normal way to test endpoints and JSON responses.
-- Laravel Pint should be used as a low-friction code-style check.
-- Larastan/PHPStan is useful for larger Laravel projects, but dependency installation should be a separate approved task unless already present.
+section
+sections
+content
+subcategories
+children
+childs inside subcategories[]
 ```
 
-Do not add new third-party dependencies in this task unless explicitly approved.
+Do not rename these keys in this task.
 
-## Primary target files
+### 2. Non-standard offers endpoint
 
-Testing files likely to create:
+Control endpoint pattern:
 
 ```text
-tests/Feature/Blocks/BlockCategoryEndpointTest.php
-tests/Feature/Blocks/RouteRegistrationTest.php
-tests/Unit/Support/EavContentResolverTest.php
-tests/Unit/Support/BlockAttachMapTest.php
-tests/Unit/Architecture/LayerBoundaryTest.php
-tests/Support/BlocksTestData.php
+GET /en/blocks/categories/offers/{slug}
 ```
 
-Application files that may be inspected:
+This endpoint is intentionally included because the audit found that:
 
 ```text
-routes/api.php
-bootstrap/app.php
-app/Providers/AppServiceProvider.php
-app/Http/Controllers/Api/BlockCategoryController.php
-app/Repositories/BlockCategoryRepository.php
-app/Http/Resources/BlockCategoryResource.php
-app/Http/Resources/BlockResource.php
-app/Http/Resources/BlockItemResource.php
-app/Support/CategoryPayloadAssembler.php
+- it returns a flat JSON object
+- it does not use the standard Laravel Resource .data envelope
+- it is assembled manually inside BlockCategoryController::offers()
+```
+
+Before later refactoring, tests must lock down its current shape.
+
+Expected top-level shape:
+
+```text
+category
+block
+items
+```
+
+Expected explicit non-envelope assertion:
+
+```text
+There should be no required top-level data envelope for the current offers endpoint.
+```
+
+If the frontend later agrees to migrate this endpoint to a `.data` envelope, that must be a separate contract migration task with frontend handoff.
+
+---
+
+## Secondary Unit / Support Targets
+
+Add targeted tests for pure transformation and policy classes where feasible:
+
+```text
 app/Support/EavContentResolver.php
 app/Support/BlockAttachMap.php
-app/Models/*.php
 ```
 
-Application files that may be changed only if justified:
+Recommended unit coverage for `EavContentResolver`:
 
 ```text
-app/Http/Controllers/Api/BlockCategoryController.php
-app/Repositories/BlockCategoryRepository.php
-composer.json
-pint.json
+- single item mode
+- keyed mode
+- array mode
+- string values
+- json values
+- integer / float / number values
+- boolean values
+- is_collection values
+- sorting by sort / priority-like field if current resolver supports it
 ```
 
-Changing `composer.json` is allowed only for scripts using already installed tools.
-Do not add Larastan/PHPStan in this task unless it is already installed.
+Recommended coverage for `BlockAttachMap`:
 
-## Stage 1 — Inspect and confirm route behavior
+```text
+- known attach target for descr_data
+- known attach target for slide/list/simplehtml/works if present
+- isSingle()
+- isKeyed()
+- unknown block key behavior
+```
+
+Do not turn these support classes into services in this task.
+
+---
+
+## Files to Inspect First
 
 Before writing tests, inspect:
 
 ```text
+.agents/reports/AUDIT-BE-004-backend-architecture-audit.md
+.agents/METHOD.md
+.agents/RUNBOOK.md
+.agents/REVIEW-CHECKLIST.md
+.routes/api.php
+.bootstrap/app.php
+.app/Providers/AppServiceProvider.php
+.app/Http/Controllers/Api/BlockCategoryController.php
+.app/Http/Resources/BlockCategoryResource.php
+.app/Http/Resources/BlockResource.php
+.app/Http/Resources/BlockItemResource.php
+.app/Support/CategoryPayloadAssembler.php
+.app/Support/EavContentResolver.php
+.app/Support/BlockAttachMap.php
+.tests/Feature
+.tests/Unit
+.phpunit.xml
+.composer.json
+```
+
+---
+
+## Allowed Changes
+
+You may create or modify test-related files, such as:
+
+```text
+tests/Feature/BlockCategoryServicesContractTest.php
+tests/Feature/BlockCategoryOffersContractTest.php
+tests/Unit/EavContentResolverTest.php
+tests/Unit/BlockAttachMapTest.php
+tests/Support/*
+tests/Fixtures/*
+tests/Pest.php
+tests/TestCase.php
+phpunit.xml only if strictly necessary and safe
+```
+
+You may add small test-only fixture builders if needed.
+
+You may create the final report:
+
+```text
+.agents/reports/REPORT-BE-005-backend-contract-safety-net.md
+```
+
+---
+
+## Forbidden Changes
+
+Do not modify production architecture files in this task unless there is a tiny, strictly necessary test-enablement fix and it is clearly justified.
+
+Specifically do not change:
+
+```text
+app/Http/Controllers/Api/BlockCategoryController.php
+app/Http/Resources/BlockCategoryResource.php
+app/Repositories/BlockCategoryRepository.php
+app/Support/CategoryPayloadAssembler.php
+app/Support/EavContentResolver.php
+app/Support/BlockAttachMap.php
+app/Models/BlockItem.php
+routes/api.php
 bootstrap/app.php
 app/Providers/AppServiceProvider.php
-routes/api.php
-php artisan route:list
+database/migrations/**
+database/seeders/**
+frontend files
 ```
 
-Answer these questions:
+Do not:
 
 ```text
-1. Is routes/api.php registered once or twice?
-2. Is the working endpoint /api/en/blocks/categories/services or /en/blocks/categories/services?
-3. Are named routes usable for tests?
-4. Is the route group middleware correct?
-5. Does SetLocale run for all API routes?
+- fix route duplication yet
+- refactor offers() yet
+- remove attributesToArray() yet
+- consolidate properties/propertyValues relations yet
+- migrate BlockAttachMap into DB metadata yet
+- change public JSON keys
+- change endpoint URLs
+- change frontend code
 ```
 
-If route duplication is confirmed, do not automatically remove it unless a failing test or route-list evidence makes the fix low-risk.
-Prefer:
+These belong to later tasks.
 
-```text
-- document the finding
-- add a test that protects the expected route
-- recommend a separate route-cleanup task if necessary
-```
+---
 
-## Stage 2 — Build isolated test fixture
+## Test Data Strategy
 
-Do not rely blindly on production seeders for contract tests.
-Production seeders may depend on JSON files, storage paths, execution order, or content history.
+Prefer deterministic isolated test data.
 
-Create a minimal test-data helper, for example:
+Recommended order:
 
-```text
-tests/Support/BlocksTestData.php
-```
+### Option A — Isolated test fixtures, preferred
 
-The helper should create the minimum EAV graph needed to exercise the category endpoint:
+Use migrations/RefreshDatabase and create the minimum EAV graph required for the tests:
 
 ```text
 blocks_categories:
   services
-  prodvizenie child of services
+  one or more service subcategories
+  one category suitable for offers/{slug}
 
 blocks:
   descr_data
-  list or works, only if needed for sections behavior
+  offers
+  any block required for sections if testing it
 
 block_items:
-  services content item
-  prodvizenie content item
+  category-bound items
 
 block_item_properties:
   title
@@ -201,302 +311,185 @@ block_item_properties:
   content
   metadata
   priority
-  sort, if needed
+  other minimal required properties
 
 block_item_property_values:
-  locale = en
-  value_type = string / json / number
+  localized values for en
 ```
 
-Use direct DB inserts or model forceFill where safer.
-Do not depend on mass assignment unless models explicitly allow it.
+### Option B — Existing seeded database smoke test, temporary
 
-The fixture must be small, readable, and local to tests.
+Only use the existing local seeded DB if isolated fixtures are impractical in the current environment.
 
-## Stage 3 — Add endpoint contract tests
-
-Create a feature test for the category endpoint.
-
-The test should verify:
+If using this option, state clearly in the report:
 
 ```text
-- endpoint returns 200
-- response uses Laravel Resource envelope: data
-- data.key = services
-- data.section = en, unless route behavior proves otherwise
-- data.content exists
-- data.content.title exists
-- data.subcategories exists as an array
-- first subcategory includes id, slug, childs
-- first subcategory includes EAV fields: title, descr, content, metadata, priority
-- data.blocks exists
+This is a smoke/contract test over existing seeded data, not a fully isolated test.
+```
+
+### Option C — Static test file generation only, fallback
+
+If PHP/Composer are not available in the agent execution environment, create the tests statically and report that they must be run manually by the human developer.
+
+This is partial completion only.
+
+---
+
+## Expected Tests
+
+At minimum, create:
+
+```text
+tests/Feature/BlockCategoryServicesContractTest.php
+tests/Feature/BlockCategoryOffersContractTest.php
+```
+
+Strongly recommended:
+
+```text
+tests/Unit/EavContentResolverTest.php
+tests/Unit/BlockAttachMapTest.php
+```
+
+Optional:
+
+```text
+tests/Feature/RouteRegistrationContractTest.php
+```
+
+The optional route registration test may document the current duplicated route risk, but it must not fix it. The actual cleanup belongs to `TASK-BE-006`.
+
+---
+
+## Required Assertions
+
+### Services endpoint
+
+The services endpoint test must assert:
+
+```text
+- HTTP 200 for GET /en/blocks/categories/services
+- root has data
+- data.key === services if test fixture supports this exact assertion
+- data.section === en
+- data.content exists and is object/array
 - data.sections exists
-- data.children exists or remains compatible with current behavior
+- data.subcategories exists and is array
+- each relevant subcategory contains id, slug, childs
+- data.blocks exists
+- data.children exists or remains present as current compatibility field
+- no raw EAV internals are required by frontend assertions
 ```
 
-Do not assert the full long HTML content.
-Assert structure and stable critical values.
+### Offers endpoint
 
-Prefer Laravel JSON assertions such as:
+The offers endpoint test must assert:
 
 ```text
-assertOk()
-assertJsonPath()
-assertJsonStructure()
+- HTTP 200 for GET /en/blocks/categories/offers/{slug}
+- response has category
+- response has block
+- response has items
+- response does not require top-level data envelope in the current contract
+- items[] contains id, key, name, properties where test data supports it
 ```
 
-If the correct URL is uncertain, first use named routes or route-list evidence.
-Do not hardcode a wrong prefix.
+### Resolver / attach map
 
-## Stage 4 — Add support-layer unit tests
+Unit tests must assert existing behavior, not desired future behavior.
 
-### EavContentResolver tests
+---
 
-Cover:
+## Commands to Run
 
-```text
-- single item mode
-- array mode
-- keyed mode
-- json casting
-- integer / float / boolean / number casting
-- is_collection behavior
-- sort property behavior
-- empty collection behavior
-```
+Run as many as the environment allows:
 
-Use real Eloquent models with in-memory relations where possible, or simple model instances with `setRelation()`.
-Avoid hitting production DB unless needed.
-
-### BlockAttachMap tests
-
-Cover:
-
-```text
-- descr_data attaches to content
-- slide/list/works attach to sections
-- unknown block returns null attach
-- isSingle()
-- isKeyed()
-- is()
-```
-
-These tests should be simple and fast.
-
-### CategoryPayloadAssembler tests
-
-Optional in this task.
-Add only if the fixture is already clear enough.
-Do not overfit the assembler test to implementation internals.
-Prefer endpoint tests for public contract.
-
-## Stage 5 — Add architecture boundary checks
-
-Without adding dependencies, create a small Pest/PHPUnit test that scans relevant source files.
-
-Suggested checks:
-
-```text
-Resources must not contain:
-  - DB::
-  - ::where(
-  - query()
-  - firstOrFail(
-  - new BlockCategoryRepository
-
-Controllers should not contain direct model querying except explicitly allowed transitional cases.
-```
-
-Do not make this test too naive if it causes false positives.
-Whitelist known transitional files only with explicit comments.
-
-Initial expected result:
-
-```text
-BlockCategoryController::offers() may be a known transitional violation.
-```
-
-The test may either:
-
-```text
-A. fail and force cleanup in this task, or
-B. mark offers() as an explicit temporary allowlist with a TODO and audit reference.
-```
-
-Prefer A if the cleanup is small and safe.
-
-## Stage 6 — Optional small boundary cleanup
-
-After tests exist and pass, evaluate `BlockCategoryController::offers()`.
-
-Current suspected behavior:
-
-```text
-- controller fetches BlocksCategories by key
-- controller fetches Block by key = offers
-- controller queries items and propertyValues directly
-- controller returns ad-hoc JSON
-```
-
-Preferred direction:
-
-```text
-BlockCategoryController::offers()
-  → BlockCategoryRepository::getOffersForCategory($locale, $slug)
-    → prepared category/block/items data
-      → existing BlockItemResource or small response builder
-```
-
-Constraints:
-
-```text
-- preserve current response keys: category, block, items
-- preserve route URL
-- preserve status codes
-- do not introduce a large service layer
-- do not change frontend
-```
-
-If cleanup is done, add/extend a feature test for:
-
-```text
-GET /{prefix}/en/blocks/categories/offers/{slug}
-```
-
-If cleanup is not done, document why and recommend a separate task.
-
-## Stage 7 — Code style and validation
-
-Run as available:
-
-```text
+```bash
 php artisan test
-php artisan test --filter=BlockCategoryEndpointTest
-php artisan test --filter=EavContentResolverTest
-php artisan test --filter=BlockAttachMapTest
+./vendor/bin/pest
 ./vendor/bin/pint --test
+php artisan route:list
+composer validate
 ```
 
-If Pint reports changes but the task scope is not style cleanup, either:
+If using Windows PowerShell:
+
+```powershell
+php artisan test
+.\vendor\bin\pest
+.\vendor\bin\pint --test
+php artisan route:list
+composer validate
+```
+
+If PHP or Composer are unavailable, do not claim runtime validation succeeded.
+
+---
+
+## Expected Final Report
+
+Create:
 
 ```text
-- run Pint only on touched files, or
-- report existing style drift without broad formatting
+.agents/reports/REPORT-BE-005-backend-contract-safety-net.md
 ```
 
-Do not run global formatting across unrelated files unless explicitly approved.
-
-## Optional composer scripts
-
-If useful and low-risk, add scripts using already installed tools:
-
-```json
-{
-  "scripts": {
-    "test": [
-      "@php artisan config:clear --ansi",
-      "@php artisan test"
-    ],
-    "test:backend-contract": [
-      "@php artisan test --filter=BlockCategoryEndpointTest"
-    ],
-    "lint:php": [
-      "./vendor/bin/pint --test"
-    ]
-  }
-}
-```
-
-Do not remove existing scripts.
-Do not add unavailable binaries.
-
-## Forbidden changes
-
-Do not:
-
-```text
-- change database schema
-- rename public API keys
-- change frontend files
-- rewrite CategoryPayloadAssembler
-- rewrite EavContentResolver broadly
-- rewrite all controllers
-- install Larastan/PHPStan without approval
-- change seed content
-- depend on production database dumps for tests
-- assert full large HTML strings in tests
-- hide a route-prefix problem by changing tests only
-```
-
-## Expected deliverables
-
-Final agent report must include:
+The report must include:
 
 ```text
 1. Files inspected.
-2. Tests added.
-3. Fixture strategy used.
-4. Actual route prefix confirmed.
-5. Commands run and results.
-6. Contract fields protected.
-7. Architecture boundary checks added.
-8. Whether offers() was refactored or left as known debt.
-9. Remaining risks.
-10. Recommended TASK-BE-006.
+2. Files created/changed.
+3. Test strategy used: isolated fixtures / seeded DB smoke / static-only fallback.
+4. Contract endpoints covered.
+5. Exact assertions covered.
+6. Commands run and results.
+7. Commands that could not run and why.
+8. Whether BE-006/007/008 are now safe to run.
+9. Risks or manual follow-up.
 ```
 
-## Success criteria
+---
+
+## Success Criteria
 
 This task is successful if:
 
 ```text
-- backend has real executable tests beyond skeleton defaults
-- critical category endpoint contract is protected
-- EAV resolver behavior is protected
-- BlockAttachMap behavior is protected
-- future agents can run tests before/after refactors
-- route prefix behavior is no longer ambiguous
-- at least one layer-boundary guard exists
+- services category contract is covered by feature tests
+- offers endpoint contract is covered by feature tests
+- legacy keys are explicitly protected
+- EavContentResolver and BlockAttachMap have at least minimal unit coverage or a clear reason they could not be covered
+- test commands are run, or inability to run is honestly reported
+- no production architecture refactor is performed
+- a BE-005 report is created
 ```
 
-## Failure criteria
+---
+
+## Failure Criteria
 
 This task fails if:
 
 ```text
-- tests require production database state
-- tests are brittle full-payload snapshots of long HTML
-- tests pass while not exercising the real endpoint
-- route prefix is guessed instead of verified
-- broad unrelated formatting is applied
-- public response shape changes
-- frontend compatibility is broken
+- production architecture is refactored before tests exist
+- offers endpoint is changed before being locked down
+- services response keys are renamed
+- tests depend on vague assumptions without fixtures or documented seeded data
+- report claims tests passed when they were not executed
+- frontend code is changed
 ```
 
-## Recommended follow-up candidates
+---
 
-Depending on results, propose one of:
+## Next Tasks After Completion
+
+After BE-005 is complete and reviewed, continue with:
 
 ```text
-TASK-BE-006 — Route Registration Cleanup and API Prefix Normalization
-TASK-BE-006 — Offers Endpoint Repository Boundary Cleanup
-TASK-BE-006 — Larastan/PHPStan Introduction with Baseline
-TASK-BE-006 — EAV Query Performance and Index Audit
-TASK-BE-006 — Filament Validation Hardening for Block Content Editing
+TASK-BE-006 — Route and API Bootstrap Cleanup
+TASK-BE-007 — Offers Endpoint Boundary Refactor
+TASK-BE-008 — Explicit Resource Serialization Hardening
 ```
 
-## Core reminder
+Do not run those tasks before BE-005 is reviewed.
 
-The goal is not to make the backend perfect in one pass.
-
-The goal is to make future backend work verifiable.
-
-The correct result is:
-
-```text
-working tests
-known contracts
-known route behavior
-less uncertainty
-safer next refactor
-```
