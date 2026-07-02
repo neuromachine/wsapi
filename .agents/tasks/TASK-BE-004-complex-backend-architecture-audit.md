@@ -1,512 +1,569 @@
-# TASK-BE-004 — Complex Backend Architecture Audit and Next-Task Calibration
+# TASK-BE-004 — Complex Backend Architecture Audit
 
 ## Status
 
-Architecture / audit task.
+Execution task / read-only architecture audit.
 
 ## Priority
 
 High.
 
-## Purpose
+## Core Principle
 
-Perform a senior-level backend architecture audit of the current Laravel API codebase after the first two backend refactoring tasks have already been executed.
+Audit first. Do not refactor yet.
 
-This task is not a direct refactoring task.
-Its job is to inspect the real current code, assess the remaining architectural weaknesses, and calibrate the next implementation task so future agent runs do not continue blindly from outdated assumptions.
+This task must produce a detailed architecture audit report for the current Laravel backend after the already-started backend refactoring work from TASK-BE-002 and TASK-BE-003.
 
-## Why this task exists
+The agent must **not change application code** during this task.
 
-Earlier backend tasks already started useful work:
-
-```text
-TASK-BE-002 — Complex Refactor of Blocks Read-Side Data Loading System
-TASK-BE-003 — Optional Refactor of Block Content Seeders and Import Pipeline
-```
-
-Observed current state after those tasks:
+Allowed write target:
 
 ```text
-app/Support/CategoryPayloadAssembler.php exists.
-BlockCategoryResource delegates category payload assembly to CategoryPayloadAssembler.
-BlockResource now uses explicit public fields instead of blindly exposing attributesToArray().
-database/seeders/Helpers/ImportHelper.php exists.
-Several seeders were simplified through ImportHelper.
+.agents/reports/AUDIT-BE-004-backend-architecture-audit.md
 ```
 
-This is a meaningful start, but it does not complete the backend architecture work.
-The next risk is not just “where to move one method”.
-The next risk is that code agents may continue changing Laravel code without a verified map of contracts, tests, route registration, data-loading boundaries, seed/import assumptions, and remaining layer violations.
+No other source files should be modified unless the user explicitly approves a follow-up implementation task.
 
-## Role
+---
 
-Act as a Senior Laravel Architect / Backend Systems Auditor.
+## Context
 
-Assume the system is a real production-oriented Laravel API backend for a Vue SPA, not a greenfield training project.
+The repository is a Laravel API backend for the WebSolutions / WS CODE platform.
 
-Use these lenses:
+The system contains:
 
 ```text
-- Laravel idioms and framework conventions
-- SOLID
-- Clean Architecture / Ports-and-Adapters thinking where useful
-- pragmatic layered architecture
-- API contract preservation
-- EAV / content-platform architecture
-- testability
-- refactor safety
-- agent-coding readiness
+- Laravel REST API backend
+- Blocks / Categories / Items / EAV content model
+- File-based seed/import pipeline
+- Vue SPA frontend consuming Laravel Resource envelopes
+- .agents context system created for AI coding agents
 ```
 
-Do not pursue theoretical purity when it conflicts with the existing project constraints.
-The preferred principle remains:
+Previous work has already started:
 
 ```text
-improve without breaking
+TASK-BE-002
+  Complex read-side refactor around Blocks/Categories.
+  Expected result: CategoryPayloadAssembler and cleaner Resource boundary.
+
+TASK-BE-003
+  Optional seed/import refactor.
+  Expected result: ImportHelper and reduced seeder duplication.
 ```
 
-## Primary inputs
+Treat TASK-BE-002 and TASK-BE-003 as **starting potential**, not as final architecture.
 
-Inspect the real repository, not only this task file.
+The goal of this task is to understand the real current state after those changes and identify the safest next architectural work.
 
-Primary sources:
+---
+
+## Required Inputs
+
+Before auditing, inspect the available project materials.
+
+### Agent runtime and methodology
 
 ```text
 AGENTS.md
-.agents/agents.md
 .agents/README.md
-.agents/info/**/*.md
-.agents/info/improvements/**/*.md
-.agents/skills/**/*.md
-.agents/tasks/TASK-BE-002*.md
-.agents/tasks/TASK-BE-003*.md
+.agents/agents.md
+.agents/METHOD.md
+.agents/RUNBOOK.md
+.agents/REVIEW-CHECKLIST.md
 ```
 
-Primary backend source areas:
+### Information layer
 
 ```text
-routes/api.php
-bootstrap/app.php
-app/Providers/AppServiceProvider.php
-app/Http/Controllers/Api/*.php
-app/Repositories/*.php
-app/Http/Resources/*.php
-app/Support/*.php
-app/Models/*.php
-app/Http/Requests/*.php
-app/Http/Middleware/*.php
-app/Filament/Resources/**/*.php
-database/migrations/*.php
-database/seeders/**/*.php
-config/filesystems.php
-config/database.php
-config/cors.php
-composer.json
-phpunit.xml
-tests/**/*.php
+.agents/info/INDEX.md
+.agents/info/MATERIALS-MAP.md
+.agents/info/GLOSSARY.md
+.agents/info/BE-00-overview.md
+.agents/info/BE-01-routing-and-scope.md
+.agents/info/BE-02-blocks-read-side-flow.md
+.agents/info/BE-03-eav-domain.md
+.agents/info/BE-04-repository-layer.md
+.agents/info/BE-05-resource-layer.md
+.agents/info/BE-06-eav-content-resolver.md
+.agents/info/BE-07-block-attach-map.md
+.agents/info/BE-08-content-seed-pipeline.md
+.agents/info/BE-CATEGORY-ENDPOINT-CONTRACT.md
+.agents/info/BE-RESOURCE-BOUNDARY.md
+.agents/info/FE-BACKEND-CONTRACT-BRIDGE.md
 ```
 
-Known reference endpoint:
+### AIP layer
 
 ```text
-GET /en/blocks/categories/services
-GET /api/en/blocks/categories/services
+.agents/info/improvements/AIP-000-index.md
+.agents/info/improvements/AIP-BE-001-read-side-refactor.md
+.agents/info/improvements/AIP-BE-002-category-response-contract.md
+.agents/info/improvements/AIP-BE-003-resource-to-assembler-boundary.md
+.agents/info/improvements/AIP-BE-004-seeders-import-pipeline.md
+.agents/info/improvements/AIP-BE-005-naming-and-compatibility-layer.md
+.agents/info/improvements/AIP-FE-001-server-driven-ui-path.md
 ```
 
-Do not assume which one is correct. Inspect route registration and route:list.
-
-## External / community baseline to consider
-
-Before finalizing the audit recommendations, compare the local project with current Laravel/community practice.
-
-Minimum community baseline:
+### Skills
 
 ```text
-1. Laravel API Resources are a transformation layer between Eloquent models and JSON responses.
-2. Laravel service container / dependency injection should be preferred over hidden construction when dependencies become non-trivial.
-3. Laravel HTTP tests provide a first-class way to exercise endpoints and inspect JSON responses.
-4. Laravel Pint is the default low-friction code-style safety tool.
-5. Larastan / PHPStan is a common optional quality gate for larger Laravel systems, but adding it is a separate dependency decision.
-6. In modern Laravel, routes/api.php is normally registered through bootstrap/app.php and receives the API prefix automatically unless configured otherwise.
+.agents/skills/ws_backend_read_side_refactor.md
+.agents/skills/ws_backend_contract_preservation.md
+.agents/skills/ws_backend_resource_boundary.md
+.agents/skills/ws_backend_repository_and_query_loading.md
+.agents/skills/ws_backend_eav_mapping.md
+.agents/skills/ws_backend_assembler_decision.md
+.agents/skills/ws_backend_seed_pipeline.md
+.agents/skills/ws_frontend_backend_contract.md
+.agents/skills/ws_agent_regression_protocol.md
 ```
 
-If web access is available, verify these points from current official documentation before writing the final report.
-If web access is not available, state that the audit uses local knowledge and mark external verification as not performed.
+### Previous tasks and results
 
-Do not import random blog advice as authority.
-Prefer official Laravel documentation, package documentation, and widely adopted community tools.
-
-## What must be audited
-
-### 1. Route and request lifecycle audit
-
-Map the actual route lifecycle:
+Inspect if present:
 
 ```text
-HTTP request
-  → bootstrap/app.php route registration
-  → AppServiceProvider route registration, if any
-  → routes/api.php
-  → middleware SetLocale
-  → controller
-  → repository / assembler / resource
-  → JSON response
+.agents/tasks/TASK-BE-002*
+.agents/tasks/TASK-BE-003*
+implementation_plan_t2.md
+implementation_plan_t3.md
+walkthrough_t2.md
+walkthrough_t3.md
 ```
 
-Specifically inspect:
+The exact filenames may differ. Do not fail if some documents are absent; note missing context in the report.
 
-```text
-- Whether routes/api.php is registered once or twice.
-- Whether /api prefix is automatic, manually added, duplicated, or intentionally bypassed.
-- Whether route names are stable and usable for tests.
-- Whether {locale} is only a locale or also a content scope.
-- Whether SetLocale has too broad a responsibility or is acceptable for now.
-```
+---
 
-Known issue to verify:
+## Primary Audit Scope
 
-```text
-bootstrap/app.php appears to register routes/api.php through withRouting(api: ...).
-AppServiceProvider also appears to register routes/api.php manually with prefix('api').
-This may create duplicate route registration or hide route-prefix confusion.
-Do not change it in this audit task; document and classify the risk.
-```
+Audit the current backend repository as a senior Laravel architect.
 
-### 2. Read-side architecture audit
+Focus on architectural weaknesses that affect the whole project, not just one endpoint.
 
-Inspect the current state after TASK-BE-002.
-
-Map:
-
-```text
-BlockCategoryController
-  → BlockCategoryRepository
-    → BlocksCategories model graph
-      → CategoryPayloadAssembler
-        → EavContentResolver
-        → BlockAttachMap
-          → BlockCategoryResource / BlockResource / BlockItemResource
-```
-
-Check:
-
-```text
-- Does any Resource still perform SQL or hidden lazy loading?
-- Does any Controller still perform query logic that belongs to Repository?
-- Does CategoryPayloadAssembler improve clarity or become a new God object?
-- Does BlockCategoryRepository return fully prepared graph data?
-- Are relation names clear enough: items, propertyValues, properties, children, childrenRecursive?
-- Is there duplicate EAV transformation between EavContentResolver and BlockItemResource?
-- Is BlockAttachMap still a static compatibility policy or drifting toward hidden business logic?
-```
-
-Known issue to verify:
-
-```text
-BlockCategoryController::offers() still appears to query BlocksCategories and Block directly inside the controller.
-This violates the thin-controller principle used by the rest of the module.
-Classify this as a concrete boundary cleanup candidate.
-```
-
-### 3. API contract audit
-
-Audit public response contracts for:
-
-```text
-GET /{locale}/blocks/categories/{slug}
-GET /{locale}/blocks/categories/structure/{slug?}
-GET /{locale}/blocks/categories/offers/{slug}
-GET /{locale}/blocks/blocks/{slug}
-GET /{locale}/blocks/items/{slug}
-POST /{locale}/forms/submit
-```
-
-For each endpoint, record:
-
-```text
-- route name
-- controller action
-- response wrapper / shape
-- Resource used, if any
-- known frontend consumer, if visible
-- compatibility-sensitive keys
-- untested assumptions
-```
-
-Critical fields that must not be renamed casually:
-
-```text
-data
-content
-sections
-subcategories
-children
-childs
-blocks
-items
-properties
-section
-locale
-scope
-acticle
-metadata
-priority
-```
-
-### 4. Test and regression audit
+### 1. Routing and bootstrap
 
 Inspect:
 
 ```text
-tests/Feature/ExampleTest.php
-tests/Unit/ExampleTest.php
-tests/Pest.php
-tests/TestCase.php
-phpunit.xml
-composer.json
+bootstrap/app.php
+app/Providers/AppServiceProvider.php
+routes/api.php
+routes/web.php
+app/Http/Middleware/SetLocale.php
 ```
 
 Determine:
 
 ```text
-- Which tests are real and which are default skeleton tests.
-- Whether RefreshDatabase is enabled globally, per test, or not used.
-- Whether SQLite in-memory testing can run the project migrations.
-- Whether endpoint contract tests exist.
-- Whether EAV transformation tests exist.
-- Whether architecture boundary tests exist.
-- Whether Pint is installed and usable.
-- Whether Larastan/PHPStan is installed or should remain a future proposal.
+- how API routes are actually registered
+- whether routes/api.php is registered once or twice
+- whether /api prefix behavior is correct
+- how {locale} works
+- whether locale/scope/app-locale roles are mixed safely or dangerously
 ```
 
-Known issue to verify:
-
-```text
-Current tests appear to be default skeleton tests only.
-This means backend refactors currently lack executable contract safety.
-This is likely the highest-leverage weakness before more structural changes.
-```
-
-### 5. Seeder / import audit
-
-Inspect the result after TASK-BE-003:
-
-```text
-database/seeders/Helpers/ImportHelper.php
-database/seeders/DatabaseSeeder.php
-active seeders
-legacy seeders
-BlockContentHelper
-config/filesystems.php
-storage/app/blocks assumptions
-```
-
-Check:
-
-```text
-- Is ImportHelper useful or too static/procedural?
-- Does it preserve value_type correctly or collapse non-array types into string?
-- Are timestamps handled consistently?
-- Are hardcoded IDs still present where risky?
-- Are active vs legacy seeders clearly documented?
-- Do seeders require files that are absent from repository / ignored storage?
-- Can tests rely on seeders, or do they need isolated fixtures?
-```
-
-Do not change seeders in this audit task.
-
-### 6. Model and schema audit
+### 2. Controller boundaries
 
 Inspect:
 
 ```text
-Block
-BlockItem
-BlockItemProperty
-BlockItemPropertyValue
-BlocksCategories
-Form
-migrations
-SQL dump, if present
+app/Http/Controllers/Api/*Controller.php
+```
+
+Find:
+
+```text
+- direct model queries in controllers
+- response assembly inside controllers
+- duplicated endpoint logic
+- controllers that bypass repositories/resources
+```
+
+Controllers should stay thin.
+
+### 3. Repository and query layer
+
+Inspect:
+
+```text
+app/Repositories/*.php
 ```
 
 Evaluate:
 
 ```text
-- relation naming clarity
-- missing return types
-- fillable/guarded implications for tests and Filament
-- unused pivot table risk
-- unique key implications
-- missing indexes for locale/version/sort-like queries
-- EAV performance risk
-- compatibility with SQLite test database
+- eager loading completeness
+- locale filtering strategy
+- recursive category handling
+- query duplication
+- places where repositories are becoming God objects
+- missing named query/read collaborators
 ```
 
-Do not propose schema changes as immediate edits unless they are low-risk and separately scoped.
-Schema changes should normally become an AIP or future task.
-
-### 7. Filament/admin audit
-
-Inspect Filament Resources at a high level.
-
-Record:
-
-```text
-- whether admin resources reflect the same domain model as API
-- whether they bypass invariants enforced by seeders/importers
-- whether admin changes can break frontend API assumptions
-- whether property/value editing requires validation hardening
-```
-
-Do not refactor Filament in this audit task.
-
-### 8. Operations and security audit
+### 4. Resource and serialization layer
 
 Inspect:
 
 ```text
-config/cors.php
-.env.example
-FormSubmitRequest
-FormController
-SetLocale
-TestMailSend command
+app/Http/Resources/*.php
 ```
 
-Record:
+Evaluate:
 
 ```text
-- input validation state
-- form payload persistence behavior
-- email / notification assumptions
-- CORS exposure assumptions
-- environment safety issues
-- public API exposure assumptions
+- whether Resources perform SQL
+- whether Resources hide business/query decisions
+- attributesToArray leakage risk
+- explicit vs implicit public fields
+- compatibility with Laravel Resource envelope response.data.data
 ```
 
-Do not introduce auth or security redesign in this task.
+### 5. Read-side assembly
 
-## Findings format
-
-Classify every finding with:
+Inspect:
 
 ```text
-ID: BE-AUDIT-###
-Severity: P0 / P1 / P2 / P3
-Area: routing / read-side / resources / repository / tests / seeders / schema / forms / filament / ops / docs
-Evidence: exact files/methods inspected
-Risk: what can break
-Recommendation: what should happen
-Task candidate: TASK-BE-005 / TASK-BE-006 / AIP / postpone
-Confidence: high / medium / low
+app/Support/CategoryPayloadAssembler.php
+app/Support/EavContentResolver.php
+app/Support/BlockAttachMap.php
 ```
 
-Severity guidance:
+Evaluate:
 
 ```text
-P0 — currently likely broken or dangerous for production/runtime
-P1 — likely to cause regressions or block safe future refactoring
-P2 — real maintainability/performance/testability debt
-P3 — naming/style/documentation cleanup
+- whether CategoryPayloadAssembler improved boundaries after TASK-BE-002
+- whether it is still small and focused
+- whether EAV transformation is consistent across usages
+- whether BlockAttachMap is a compatibility policy or hidden architecture debt
+- whether content / sections / blocks / subcategories routing is understandable
 ```
 
-## Required output files
+### 6. EAV model consistency
 
-Create or update:
+Inspect:
+
+```text
+app/Models/Block.php
+app/Models/BlockItem.php
+app/Models/BlockItemProperty.php
+app/Models/BlockItemPropertyValue.php
+app/Models/BlocksCategories.php
+```
+
+Evaluate:
+
+```text
+- relationship naming consistency
+- fillable/casts usage
+- property.type vs value.value_type tension
+- is_collection behavior
+- version/draft-publish readiness
+- hidden assumptions about unique keys
+```
+
+### 7. Seed/import pipeline
+
+Inspect:
+
+```text
+database/seeders/**/*.php
+database/seeders/Helpers/BlockContentHelper.php
+database/seeders/Helpers/ImportHelper.php
+config/filesystems.php
+storage/app/blocks/**  (if present)
+```
+
+Evaluate:
+
+```text
+- whether TASK-BE-003 improved duplication safely
+- active vs legacy seeders
+- hardcoded IDs vs keys
+- dependency order
+- idempotency
+- missing validation
+- content drift risk
+- JSON/encoding/data-quality risks
+```
+
+### 8. Forms subsystem
+
+Inspect:
+
+```text
+app/Http/Controllers/Api/FormController.php
+app/Http/Requests/FormSubmitRequest.php
+app/Models/Form.php
+app/Enums/FormStatus.php
+lang/*/forms.php
+```
+
+Evaluate:
+
+```text
+- validation structure
+- locale behavior
+- persistence model
+- spam/rate-limit exposure
+- notification/queue readiness
+- error response compatibility with frontend
+```
+
+### 9. Filament/admin layer
+
+Inspect if present:
+
+```text
+app/Filament/Resources/**
+```
+
+Evaluate:
+
+```text
+- whether admin editing respects the same model constraints as seed/import/API
+- risk of invalid EAV data through admin forms
+- missing validation/casts
+- whether content editors can break API contracts accidentally
+```
+
+### 10. Tests, CI and tooling
+
+Inspect:
+
+```text
+composer.json
+phpunit.xml
+tests/**
+.github/**  (if present)
+```
+
+Evaluate:
+
+```text
+- Pest/PHPUnit availability
+- current test coverage reality
+- absence/presence of API contract tests
+- Pint availability
+- Larastan/PHPStan readiness as future step, not mandatory install
+- suitability of TASK-BE-005 as safety-net task
+```
+
+### 11. Frontend contract impact
+
+The backend audit must explicitly identify areas that may require frontend follow-up.
+
+Look for backend behavior that affects:
+
+```text
+- response.data.data envelope
+- /{locale}/blocks/categories/{slug}
+- /{locale}/blocks/blocks/navigation
+- forms/submit
+- content / sections / blocks / subcategories / children / childs
+- item.properties shape
+- locale / scope / section semantics
+```
+
+Do not edit frontend code in this task. Only produce backend-to-frontend handoff recommendations.
+
+---
+
+## External / Community Practice Calibration
+
+Before finalizing recommendations, calibrate the audit against modern Laravel and clean architecture practice.
+
+Use this as reasoning context, not as a reason to blindly copy patterns:
+
+```text
+- Laravel Resources should transform models/resources into JSON responses, not hide queries.
+- Laravel HTTP tests can validate JSON API contracts at endpoint level.
+- Laravel Pint can provide low-friction style consistency.
+- Laravel service container / dependency injection should be used where it improves testability.
+- Static analysis such as Larastan/PHPStan can be a later quality gate, but should not be introduced as noise before basic tests exist.
+- SOLID/Clean Architecture should guide boundaries, but must not lead to framework-hostile overengineering.
+```
+
+If web access is not available, rely on official docs already known to the environment and note that external check could not be performed.
+
+---
+
+## Output Report
+
+Create exactly this file:
 
 ```text
 .agents/reports/AUDIT-BE-004-backend-architecture-audit.md
-.agents/reports/AUDIT-BE-004-findings.json
 ```
 
-The JSON file may be omitted if the agent platform cannot conveniently create it, but the markdown report is required.
-
-The markdown report must contain:
+Use this structure:
 
 ```text
-1. Executive summary
-2. Current architecture map
-3. What TASK-BE-002 improved
-4. What TASK-BE-003 improved
-5. Remaining critical weaknesses
-6. Community / Laravel baseline considered
-7. Findings table
-8. Recommended next task calibration
-9. Explicit recommendation for TASK-BE-005
-10. Backlog candidates for TASK-BE-006+
+# AUDIT-BE-004 — Backend Architecture Audit
+
+## 1. Executive Summary
+## 2. Repository Snapshot
+## 3. What TASK-BE-002 Changed / Current Read-Side State
+## 4. What TASK-BE-003 Changed / Current Seed Pipeline State
+## 5. Findings by Severity
+### P0 — Critical / Must Fix Before Further Work
+### P1 — High / Next Refactor Candidates
+### P2 — Medium / Important Architecture Debt
+### P3 — Low / Cleanup / Documentation
+## 6. Layer-by-Layer Audit
+### Routing / Bootstrap
+### Controllers
+### Repositories
+### Resources
+### CategoryPayloadAssembler
+### EavContentResolver
+### BlockAttachMap
+### EAV Models
+### Seeders / Import
+### Forms
+### Filament / Admin
+### Tests / CI / Tooling
+### Frontend Contract Impact
+## 7. Contract Risks
+## 8. Data Quality Risks
+## 9. Recommended Next Tasks
+## 10. Recommended Modification of TASK-BE-005
+## 11. Backend → Frontend Handoff Recommendations
+## 12. What Not To Refactor Yet
+## 13. Open Questions for Human Review
+## 14. Commands Run / Commands Not Run
+## 15. Final Recommendation
 ```
 
-## Allowed changes
+---
+
+## Required Recommendation Format
+
+In section `9. Recommended Next Tasks`, propose concrete future tasks using this format:
+
+```text
+TASK-BE-006 — <name>
+Priority: P0/P1/P2/P3
+Type: audit/refactor/test/contract/data/ci
+Depends on: <task id or none>
+Reason:
+Expected output:
+Frontend impact: none / handoff required / frontend task required
+```
+
+At minimum consider whether these tasks are needed:
+
+```text
+TASK-BE-006 — Route and API Bootstrap Audit / Cleanup
+TASK-BE-007 — Offers Endpoint Boundary Refactor
+TASK-BE-008 — Explicit Resource Serialization Hardening
+TASK-BE-009 — EavContentResolver Test Matrix
+TASK-BE-010 — EAV Mapping Consistency: Resource vs Resolver
+TASK-BE-011 — BlockAttachMap Compatibility Policy and Migration Path
+TASK-BE-012 — Seeder Output Snapshot / Data Drift Safety Net
+TASK-BE-013 — Content Integrity Audit
+TASK-BE-014 — Backend CI Quality Gate
+TASK-FE-001 — API Contract Adapter Layer
+TASK-FE-002 — Services Fixture Contract Test
+```
+
+Do not create these task files in this task. Only recommend and prioritize them.
+
+---
+
+## Forbidden Changes
+
+Do not:
+
+```text
+- modify app/ code
+- modify database migrations
+- modify seeders
+- modify frontend code
+- rename public API keys
+- change routes
+- run destructive commands
+- install new dependencies
+- generate unrelated documentation
+- create TASK-BE-006+ files yet
+```
 
 Allowed:
 
 ```text
-- create audit report files under .agents/reports/
-- update or annotate the next task file if explicitly part of the run
-- add TODO notes inside .agents materials only
+- read files
+- run safe inspection commands
+- run tests if available and non-destructive
+- create .agents/reports/AUDIT-BE-004-backend-architecture-audit.md
 ```
 
-Not allowed:
+---
+
+## Safe Commands
+
+The agent may run these if available:
+
+```bash
+php artisan route:list
+php artisan test
+./vendor/bin/pest
+./vendor/bin/pint --test
+composer validate
+```
+
+If the local environment is incomplete, do not invent results. Record exact failures.
+
+Do not run:
+
+```bash
+php artisan migrate:fresh
+php artisan db:seed
+php artisan migrate:fresh --seed
+composer update
+npm install
+```
+
+---
+
+## Success Criteria
+
+This task succeeds if:
 
 ```text
-- change application source code
-- change routes
-- change database schema
-- change seeders
-- change frontend
-- run destructive database commands
-- install dependencies
-- rewrite TASK-BE-002 or TASK-BE-003 history
+- no application code is changed
+- one audit report is created in .agents/reports/
+- the report reflects the actual current repository, not old assumptions
+- TASK-BE-002 and TASK-BE-003 are evaluated as already-started work
+- the next backend tasks are prioritized
+- frontend handoff needs are identified
+- TASK-BE-005 is either confirmed or adjusted based on findings
 ```
 
-## Expected final report from the agent
+---
 
-At the end of the run, report:
-
-```text
-1. Files inspected.
-2. Reports created.
-3. Top 5 findings.
-4. Whether route registration duplication was confirmed.
-5. Whether executable contract tests exist.
-6. Whether TASK-BE-005 should be modified before execution.
-7. Exact recommended next command / task.
-```
-
-## Success criteria
-
-This task is successful if:
-
-```text
-- the current backend architecture is mapped honestly
-- previous work is treated as input, not repeated blindly
-- weak points are prioritized
-- the next implementation task is better focused
-- future code-agent runs have a reliable audit baseline
-```
-
-## Failure criteria
+## Failure Criteria
 
 This task fails if:
 
 ```text
-- it changes application code
-- it gives generic Laravel advice without inspecting this project
-- it ignores TASK-BE-002 / TASK-BE-003 results
-- it proposes a rewrite without compatibility strategy
-- it does not produce a concrete next-task recommendation
+- the agent starts refactoring code
+- recommendations ignore existing .agents materials
+- the audit only repeats generic Laravel advice
+- the audit does not inspect current files
+- no severity classification is provided
+- frontend contract impact is omitted
+- TASK-BE-005 is treated as final instead of safety-net foundation
 ```
 
-## Core reminder
+---
 
-The audit is not meant to prove that the project is bad.
-It is meant to make the next engineering step safe.
+## Core Reminder
 
-The correct mindset:
+The current goal is not to make the backend perfect.
+
+The current goal is to create a reliable architectural map for the next controlled cycle:
 
 ```text
-The project has a working content architecture.
-TASK-BE-002 and TASK-BE-003 improved it.
-Now the system needs an executable safety net and a prioritized backlog before deeper refactoring continues.
+audit → safety net → bounded refactor → contract handoff → frontend task → regression
 ```
