@@ -1,92 +1,174 @@
 # Skill: WS Backend Resource Boundary
 
-## Use when
+## Purpose
 
-Use this skill for Laravel API work that touches `app/Http/Resources/*`, especially category, block, or EAV response serialization.
+Use this skill when editing Laravel API Resources or code that prepares data for Resources.
 
-Primary references:
+The Resource layer must remain focused on serialization of already-prepared data.
 
-- `.agents/info/BE-04-repository-layer.md`
-- `.agents/info/BE-05-resource-layer.md`
-- `.agents/info/BE-RESOURCE-BOUNDARY.md`
-
-## Core rule
+Core rule:
 
 ```text
-Repository prepares.
-Resource serializes.
-Resolver transforms EAV.
-AttachMap routes block output.
+Repository prepares. Resource serializes.
 ```
 
-A Resource must not compensate for an incomplete model. If a Resource needs missing relations or filtered collections, fix the Repository/read-side preparation instead of querying inside the Resource.
+---
 
-## Resource may do
+## Required context
+
+Read:
 
 ```text
-- return explicit public JSON fields
-- read already-loaded model attributes
-- read already-loaded relations
-- call EavContentResolver on already-loaded collections
-- call BlockAttachMap as routing policy
-- map prepared data to API response shape
-- use private pure helper methods for serialization clarity
+.agents/info/BE-05-resource-layer.md
+.agents/info/BE-RESOURCE-BOUNDARY.md
+.agents/info/BE-02-blocks-read-side-flow.md
+.agents/info/improvements/AIP-BE-003-resource-to-assembler-boundary.md
 ```
 
-## Resource must not do
+---
+
+## Resource responsibilities
+
+Resources may:
 
 ```text
-- call Model::where(), query(), first(), get(), with(), load(), loadMissing()
+- return explicit API arrays
+- serialize already-loaded models and relations
+- call pure transformation helpers on already-loaded data
+- apply compatibility aliases
+- perform simple null-safe formatting
+- preserve current public response shape
+```
+
+Resources may call helpers such as `EavContentResolver` only when the helper receives already-loaded data and does not perform SQL.
+
+---
+
+## Resource anti-patterns
+
+Resources must not:
+
+```text
+- perform SQL queries
+- call Model::where(), Model::with(), first(), firstOrFail() for data loading
 - call Repository classes
-- decide what data should be fetched from DB
-- perform locale/scope filtering
-- perform recursive tree cleanup that depends on DB state
-- silently change public JSON keys
-- use attributesToArray() as the API contract for public responses
+- decide which records should be loaded from the database
+- perform locale filtering through queries
+- hide missing eager loading by querying again
+- become a large response orchestration service
 ```
 
-## Preferred Resource shape
+A Resource that compensates for incomplete Repository loading is a boundary violation.
+
+---
+
+## Explicit mapping vs attributesToArray
+
+Avoid using model-wide `attributesToArray()` as the public API contract when possible.
+
+Preferred direction:
 
 ```php
 return [
     'id' => $this->id,
     'key' => $this->key,
     'name' => $this->name,
-    // explicit fields only
 ];
 ```
 
-Avoid:
+Why:
+
+```text
+- future DB columns should not leak into API by accident
+- API contract should be intentional
+- compatibility is easier to reason about
+```
+
+If changing `attributesToArray()` is too broad for the current task, document it as remaining debt.
+
+---
+
+## Handling complex Resources
+
+If a Resource becomes responsible for too much response assembly, consider whether a small read-side assembler is justified.
+
+A Resource may be too smart when it:
+
+```text
+- coordinates multiple response sections
+- applies nontrivial routing policy
+- merges category structure and EAV content
+- sorts multiple subtrees
+- handles compatibility for several legacy shapes
+- grows large private methods that are not simple serialization
+```
+
+Do not introduce an assembler automatically. First prove that it clarifies the system.
+
+---
+
+## Acceptable pattern
+
+Good Resource pattern:
+
+```text
+- receives a prepared model/read structure
+- checks relationLoaded when needed
+- serializes fields explicitly
+- delegates EAV flattening to EavContentResolver
+- preserves public keys
+- avoids DB access
+```
+
+Example direction:
 
 ```php
-return array_merge($this->attributesToArray(), [...]);
+private function resolveSubcategories(): array
+{
+    if (! $this->relationLoaded('children')) {
+        return [];
+    }
+
+    return $this->children->map(function ($category) {
+        return [
+            'id' => $category->id,
+            'slug' => $category->key,
+            'childs' => [],
+            // merge already-loaded EAV data if present
+        ];
+    })->values()->all();
+}
 ```
 
-unless the task explicitly accepts implicit field leakage.
+This is an example of direction, not a required exact implementation.
 
-## Boundary smell checklist
+---
 
-Before editing a Resource, look for:
+## Unacceptable pattern
+
+Bad Resource pattern:
+
+```php
+$newCat = BlocksCategories::where('key', $category->key)->firstOrFail();
+
+$subCat = BlocksCategories::with([...])
+    ->where('id', $category->id)
+    ->first();
+```
+
+This performs data loading inside serialization and should be refactored.
+
+---
+
+## Reporting requirements
+
+When changing Resources, report:
 
 ```text
-- App\Models\* imports inside Resource
-- ::where() / ->where() chains inside Resource
-- ->with() inside Resource
-- load/loadMissing inside Resource
-- locale filtering inside Resource
-- sorting/filtering based on business rules inside Resource
-- hidden contract via attributesToArray()
+- whether any SQL/model querying remains inside the Resource
+- what data the Resource now expects to be prepared before serialization
+- what public keys were preserved
+- whether `attributesToArray()` remains and why
+- whether a future assembler may be appropriate
 ```
 
-If found, mark it as a boundary violation and keep the public response shape stable while moving preparation to the Repository or a narrowly-scoped read assembler.
-
-## Output expectation for agents
-
-When changing Resource code, report:
-
-```text
-- what public JSON shape is preserved
-- what loading/query responsibility was moved or left unchanged
-- what files changed and why
-- whether manual regression against endpoint payload is still required
-```
