@@ -57,4 +57,21 @@ class BlockCategoryRepository
             'children.items.propertyValues.property',
         ];
     }
+
+    public function getOffersData(string $locale, string $slug): array
+    {
+        $category = BlocksCategories::where('key', $slug)->firstOrFail();
+        $block = \App\Models\Block::where('key', 'offers')->firstOrFail();
+
+        $items = $block->items()
+            ->where('category_id', $category->id)
+            ->with(['propertyValues.property']) // подгружаем связи
+            ->get();
+
+        return [
+            'category' => $category,
+            'block' => $block,
+            'items' => $items,
+        ];
+    }
 }
