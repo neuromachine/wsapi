@@ -19,19 +19,14 @@ class BlockCategoryRepository
     {
         $category = BlocksCategories::where('key', $key)->firstOrFail();
 
-/*        dd(
-            BlocksCategories::with([
-                'children' => function ($q) use ($locale) {
-                    $q->whereHas('blocks.items.propertyValues', function ($sub) use ($locale) {
-                        $sub->where('locale', $locale);
-                    });
-                },
-            ])
+        return BlocksCategories::with($this->categoryRelations($locale, $category))
             ->where('id', $category->id)
-            ->first()
-            );*/
+            ->first();
+    }
 
-        return BlocksCategories::with([
+    private function categoryRelations(string $locale, BlocksCategories $category): array
+    {
+        return [
             'blocks.properties',
             'blocks.items' => function ($q) use ($locale, $category) {
                 $q->where('category_id', $category->id)
@@ -42,8 +37,6 @@ class BlockCategoryRepository
             'blocks.items.propertyValues' => function ($q) use ($locale) {
                 $q->where('locale', $locale);
             },
-
-
             'blocks.items.propertyValues.property',
 
             'children' => function ($q) use ($locale) {
@@ -62,21 +55,6 @@ class BlockCategoryRepository
                 $q->where('locale', $locale);
             },
             'children.items.propertyValues.property',
-            /*
-            'childrenRecursive',             // вложенные категории TODO: N+1
-
-            'childrenRecursive' => function ($q) use ($locale) {
-                $q->whereHas('items', function ($sub) use ($locale) {
-                    $sub->whereHas('propertyValues', function ($deep) use ($locale) {
-                        $deep->where('locale', $locale);
-                    });
-                });
-            },
-            */
-
-
-        ])
-            ->where('id', $category->id)
-            ->first();
+        ];
     }
 }

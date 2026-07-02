@@ -9,28 +9,27 @@ use App\Support\BlockAttachMap;
 
 class BlockResource extends JsonResource
 {
-    private function resolveAttach(): ?string
-    {
-        return BlockAttachMap::get($this->key);
-    }
-
     public function toArray($request): array
     {
         $items = $this->relationLoaded('items') ? $this->items : collect();
         $isSingleton = BlockAttachMap::isSingle($this->key);
 
-        return array_merge(
-            $this->attributesToArray(), // TODO: перечислить поля явно
-            [
-                'content' => EavContentResolver::resolve($items, single: $isSingleton),
-                'attach'  => $this->resolveAttach(),
-                'properties'  => BlockPropertyResource::collection(
-                    $this->whenLoaded('properties')
-                ),
-                'items'       => BlockItemResource::collection(
-                    $this->whenLoaded('items')
-                ),
-            ]
-        );
+        return [
+            'id' => $this->id,
+            'key' => $this->key,
+            'name' => $this->name,
+            'description' => $this->description,
+            'created_at' => $this->created_at,
+            'updated_at' => $this->updated_at,
+            'laravel_through_key' => $this->laravel_through_key ?? null,
+            'content' => EavContentResolver::resolve($items, single: $isSingleton),
+            'attach'  => BlockAttachMap::get($this->key),
+            'properties'  => BlockPropertyResource::collection(
+                $this->whenLoaded('properties')
+            ),
+            'items'       => BlockItemResource::collection(
+                $this->whenLoaded('items')
+            ),
+        ];
     }
 }
