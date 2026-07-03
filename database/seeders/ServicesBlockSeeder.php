@@ -113,16 +113,25 @@ class ServicesBlockSeeder extends Seeder
                 foreach ($items as $itemDef) {
                     $itemId = ImportHelper::upsertItem($blockId, $categoryId, $itemDef['key'], $itemDef['name']);
 
-                    $props = $itemDef['properties'] ?? [];
-                    foreach ($props as $propKey => $propValue) {
-                        $propertyId = ImportHelper::getPropertyId($blockId, $propKey);
+                    foreach (['ru', 'en', 'vi'] as $locale) {
+                        $props = $locale === 'ru' 
+                            ? ($itemDef['properties'] ?? [])
+                            : ($itemDef[$locale]['properties'] ?? []);
 
-                        if (!$propertyId) {
-                            Log::warning("Свойство {$propKey} не найдено для блока ID={$blockId}");
+                        if (empty($props)) {
                             continue;
                         }
 
-                        ImportHelper::upsertPropertyValue($itemId, $propertyId, 'ru', $propValue);
+                        foreach ($props as $propKey => $propValue) {
+                            $propertyId = ImportHelper::getPropertyId($blockId, $propKey);
+
+                            if (!$propertyId) {
+                                Log::warning("Свойство {$propKey} не найдено для блока ID={$blockId}");
+                                continue;
+                            }
+
+                            ImportHelper::upsertPropertyValue($itemId, $propertyId, $locale, $propValue);
+                        }
                     }
                 }
             }
