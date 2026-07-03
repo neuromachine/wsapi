@@ -1,0 +1,93 @@
+{
+  "key": "{{offer_key}}",
+  "name": "{{offer_name_ru}}",
+  "block": "ind_offers",
+  "properties": {
+    "title": "{{title_ru}}",
+    "content": "",
+    "acticle": "{{closing_summary_ru}}",
+    "hero": {
+      "pretitle": "{{hero_pretitle_ru}}",
+      "title": "{{hero_title_ru}}",
+      "focus": "{{hero_focus_ru}}",
+      "paragraph": "{{hero_paragraph_ru}}"
+    },
+    "benefits": {
+      "pretitle": "Что получает бизнес",
+      "title": "{{benefits_title_ru}}",
+      "items": [
+        { "index": 1, "icon": "sliders", "title": "{{benefit_1_title_ru}}", "text": "{{benefit_1_text_ru}}" },
+        { "index": 2, "icon": "lightning", "title": "{{benefit_2_title_ru}}", "text": "{{benefit_2_text_ru}}" },
+        { "index": 3, "icon": "cash-stack", "title": "{{benefit_3_title_ru}}", "text": "{{benefit_3_text_ru}}" },
+        { "index": 4, "icon": "speedometer2", "title": "{{benefit_4_title_ru}}", "text": "{{benefit_4_text_ru}}" }
+      ]
+    },
+    "extras": {
+      "pretitle": "По опыту похожих проектов",
+      "title": "Конкретные плюсы для вашего бизнеса",
+      "items": [
+        { "index": 1, "icon": "check-lg", "title": "{{extra_1_title_ru}}", "text": "{{extra_1_text_ru}}" },
+        { "index": 2, "icon": "check-lg", "title": "{{extra_2_title_ru}}", "text": "{{extra_2_text_ru}}" },
+        { "index": 3, "icon": "check-lg", "title": "{{extra_3_title_ru}}", "text": "{{extra_3_text_ru}}" }
+      ]
+    },
+    "important": {
+      "pretitle": "Что именно получит ваша компания",
+      "title": "Функциональность системы",
+      "items": [
+        { "index": 1, "icon": "ui-checks", "title": "{{important_1_title_ru}}", "text": "<ul><li>{{important_1_item_1_ru}}</li><li>{{important_1_item_2_ru}}</li><li>{{important_1_item_3_ru}}</li></ul>" },
+        { "index": 2, "icon": "gear", "title": "{{important_2_title_ru}}", "text": "<ul><li>{{important_2_item_1_ru}}</li><li>{{important_2_item_2_ru}}</li><li>{{important_2_item_3_ru}}</li></ul>" }
+      ]
+    },
+    "items": {
+      "pretitle": "Стоимость",
+      "title": "Пакеты внедрения",
+      "items": [
+        {
+          "index": 1,
+          "icon": "card-text",
+          "name": "Базовый",
+          "price": "{{package_1_price_ru}}",
+          "term": "{{package_1_term_ru}}",
+          "featured": false,
+          "desc": "{{package_1_desc_ru}}",
+          "features": ["{{package_1_feature_1_ru}}", "{{package_1_feature_2_ru}}", "{{package_1_feature_3_ru}}"]
+        },
+        {
+          "index": 2,
+          "icon": "ui-checks",
+          "name": "Бизнес",
+          "price": "{{package_2_price_ru}}",
+          "term": "{{package_2_term_ru}}",
+          "featured": true,
+          "desc": "{{package_2_desc_ru}}",
+          "features": ["{{package_2_feature_1_ru}}", "{{package_2_feature_2_ru}}", "{{package_2_feature_3_ru}}"]
+        },
+        {
+          "index": 3,
+          "icon": "cpu",
+          "name": "Система",
+          "price": "{{package_3_price_ru}}",
+          "term": "{{package_3_term_ru}}",
+          "featured": false,
+          "desc": "{{package_3_desc_ru}}",
+          "features": ["{{package_3_feature_1_ru}}", "{{package_3_feature_2_ru}}", "{{package_3_feature_3_ru}}"]
+        }
+      ]
+    },
+    "includes": [
+      { "index": 1, "text": "{{include_1_ru}}", "icon": "check-lg" },
+      { "index": 2, "text": "{{include_2_ru}}", "icon": "check-lg" },
+      { "index": 3, "text": "{{include_3_ru}}", "icon": "check-lg" },
+      { "index": 4, "text": "{{include_4_ru}}", "icon": "check-lg" }
+    ]
+  },
+  "en": {
+    "name": "{{offer_name_en}}",
+    "properties": {}
+  },
+  "vi": {
+    "name": "{{offer_name_vi}}",
+    "properties": {}
+  }
+}

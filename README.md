@@ -1,41 +1,64 @@
-# Stage 13 — Seed Content Agent Package
+# Stage 14 — CP / Commercial Proposal Seeding Method Package
 
-This package switches the project from architecture refactoring into practical content seeding work.
+This package consolidates the seeding/content layer for WS commercial proposals (`ind_offers`) and service offer packages (`offers`).
 
-It documents the current seeding/import system and adds two practical tasks:
+It is intended for agent-assisted content production, not backend refactoring.
 
-```text
-TASK-SEED-001 — Service Offers Locale Expansion
-TASK-SEED-002 — Individual Offers Category and Package Data Normalization
-```
+## Current goal
 
-Use this package inside the Laravel backend repository root.
-
-## Intended focus
+Prepare reusable agent materials so an agent can generate and normalize commercial proposal JSON files for:
 
 ```text
-Data/content work first.
-No broad backend refactor.
-No frontend work yet.
-Do not turn this into another architecture audit.
+storage/app/blocks/blocks/items/ind_offers/*.json
 ```
 
-## Execution order
+and keep them compatible with:
 
 ```text
-1. Read .agents/info/SEEDING-CONTEXT-MAP.md
-2. Read .agents/contracts/CONTENT-FILE-FORMATS.md
-3. Read .agents/contracts/OFFERS-SEEDING-CONTRACT.md
-4. Run TASK-SEED-001
-5. Run TASK-SEED-002
+php artisan db:seed --class=BlockForCpDataSeeder
+GET /api/{locale}/blocks/categories/offers/{slug}
 ```
 
-## Human launch
+## Contents
+
+```text
+.agents/
+  info/
+    SEEDING-LAYER-CONSOLIDATED-CONTEXT.md
+
+  contracts/
+    IND-OFFERS-CP-CONTENT-CONTRACT.md
+    SERVICE-OFFERS-CONTENT-CONTRACT.md
+    CP-CONTENT-MODEL.md
+
+  templates/
+    ind_offer_json.template.json
+    cp_batch_input.template.md
+
+  prompts/
+    CP_BATCH_GENERATION_PROMPT.md
+
+  workflows/
+    RUN-CP-CONTENT-PRODUCTION.md
+
+  tasks/
+    TASK-CP-001-batch-generate-ind-offers.md
+    TASK-CP-002-seed-and-verify-generated-ind-offers.md
+    LAUNCH-TASK-CP-001.md
+    LAUNCH-TASK-CP-002.md
+
+  reports/templates/
+    REPORT-CP-001-batch-generate-ind-offers.template.md
+    REPORT-CP-002-seed-and-verify-generated-ind-offers.template.md
+```
+
+## Recommended first run
+
+Use:
 
 ```powershell
-cd C:\OSPanel\home\wsapi
-Get-Content .agents\workflows\RUN-SEEDING-PRACTICE.md -Raw | Set-Clipboard
+Get-Content .agents\tasks\LAUNCH-TASK-CP-001.md -Raw | Set-Clipboard
 ```
 
-Paste into Antigravity.
+Paste into the agent and provide a batch input using `.agents/templates/cp_batch_input.template.md`.
 
