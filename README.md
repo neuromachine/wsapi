@@ -1,45 +1,57 @@
-# Stage 11 — BE-005 Adjusted After BE-004 Audit
+# Stage 12 — Backend Refactor Continuation Tasks
 
-This package adds the next executable backend task after the completed `TASK-BE-004` architecture audit.
+This package continues the practical backend refactor sequence after completed BE-006 and BE-007.
 
-It assumes that Stages 1–9 and `TASK-BE-004` materials are already present in the backend repository.
+It does not evaluate the quality of those completed tasks. It assumes their reports are already in:
+
+```text
+.agents/reports/REPORT-BE-006-route-api-bootstrap-cleanup.md
+.agents/reports/REPORT-BE-007-offers-endpoint-boundary-refactor.md
+```
 
 ## Contents
 
 ```text
 .agents/
   tasks/
-    TASK-BE-005-backend-contract-safety-net.md
-    LAUNCH-BE-005-backend-contract-safety-net.md
-    TASK-BE-006-route-api-bootstrap-cleanup.md
-    TASK-BE-007-offers-endpoint-boundary-refactor.md
     TASK-BE-008-explicit-resource-serialization-hardening.md
+    LAUNCH-BE-008-explicit-resource-serialization-hardening.md
+    TASK-BE-009-eav-model-relation-cleanup.md
+    LAUNCH-BE-009-eav-model-relation-cleanup.md
+    TASK-BE-010-eav-resolver-block-item-resource-consistency.md
+    LAUNCH-BE-010-eav-resolver-block-item-resource-consistency.md
+    TASK-BE-011-filament-eav-guardrails.md
+    LAUNCH-BE-011-filament-eav-guardrails.md
+    TASK-BE-012-data-quality-audit.md
+    LAUNCH-BE-012-data-quality-audit.md
+
+  workflows/
+    RUN-BACKEND-REFRACTOR-SEQUENCE-BE-008-012.md
 
   reports/
     templates/
-      REPORT-BE-005-backend-contract-safety-net.template.md
-
-  workflows/
-    RUN-BE-005.md
+      REPORT-BE-008-explicit-resource-serialization-hardening.template.md
+      REPORT-BE-009-eav-model-relation-cleanup.template.md
+      REPORT-BE-010-eav-resolver-block-item-resource-consistency.template.md
+      REPORT-BE-011-filament-eav-guardrails.template.md
+      REPORT-BE-012-data-quality-audit.template.md
 ```
 
-## How to use
-
-1. Copy this package into the backend repository root.
-2. Run only `TASK-BE-005` first.
-3. Do not run `TASK-BE-006/007/008` until BE-005 is completed and reviewed.
-
-## Intended execution order
+## Canonical execution order
 
 ```text
-TASK-BE-004  -> completed audit report
-TASK-BE-005  -> contract safety net / tests
-TASK-BE-006  -> route/bootstrap cleanup
-TASK-BE-007  -> offers endpoint boundary refactor
-TASK-BE-008  -> explicit Resource serialization hardening
+BE-006 — completed
+BE-007 — completed
+BE-008 — run next
+BE-009 — run after BE-008
+BE-010 — run after BE-009
+BE-011 — run after BE-010
+BE-012 — run after BE-011, or independently as audit-only data task
 ```
 
-## Important
+## Rule
 
-`TASK-BE-005` is not a structural refactor. It should create a safety net before code architecture changes continue.
+These are practical code/refactor tasks. Tests are useful, but they are not the primary subject of this package.
+
+Each task should produce a small coherent diff and a report.
 
