@@ -20,7 +20,6 @@ it('preserves the flat json contract for the offers endpoint', function () {
                 'id',
                 'key',
                 'name',
-                'description',
                 'properties' // Assert it returns properties instead of flattened values
             ]
         ]

@@ -56,23 +56,7 @@ class BlockItemResource extends Resource
                 ->required()
                 ->label('Категория'),
 
-                Repeater::make('properties')
-                    ->relationship()
-                    ->label('Repeater : properties')
-                    ->schema([
-                        Group::make([
-                            TextInput::make('name'),
-                            TextInput::make('key'),
-                            /*
-                            KeyValue::make('properties')
-                                ->label('Свойства')
-                                ->keyLabel('Ключ')
-                                ->valueLabel('Значение'),
-                            */
-                        ])
-                            ->columns(2)
-                            ->columnSpanFull(),
-                    ]),
+
 
 
                 Repeater::make('propertyValues')

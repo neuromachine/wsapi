@@ -16,10 +16,12 @@ class BlockItem extends Model
         return $this->belongsTo(Block::class, 'block_id');
     }
 
+    /**
+     * @deprecated Use propertyValues() for EAV values.
+     */
     public function properties()
     {
-        return $this->hasMany(BlockItemPropertyValue::class, 'item_id')
-            ->with('property');
+        return $this->propertyValues();
     }
 
     // TODO: а где метод для ->with('property')?

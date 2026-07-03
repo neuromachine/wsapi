@@ -12,6 +12,7 @@ class EavFixture
 {
     public static function createServicesCategory(): BlocksCategories
     {
+        \Illuminate\Database\Eloquent\Model::unguard();
         $category = BlocksCategories::create([
             'key' => 'services',
             'name' => 'Services',
@@ -40,11 +41,13 @@ class EavFixture
             ['key' => 'title', 'value' => 'Sub Title', 'type' => 'string', 'is_collection' => false],
         ]);
 
+        \Illuminate\Database\Eloquent\Model::reguard();
         return $category;
     }
 
     public static function createOffersCategory(): BlocksCategories
     {
+        \Illuminate\Database\Eloquent\Model::unguard();
         $category = BlocksCategories::create([
             'key' => 'test-offers',
             'name' => 'Test Offers',
@@ -58,6 +61,7 @@ class EavFixture
             ['key' => 'offer_price', 'value' => '100', 'type' => 'integer', 'is_collection' => false],
         ], 'offer_1');
 
+        \Illuminate\Database\Eloquent\Model::reguard();
         return $category;
     }
 
@@ -66,7 +70,8 @@ class EavFixture
         $item = BlockItem::create([
             'block_id' => $block->id,
             'category_id' => $category->id,
-            'key' => $itemKey ?? 'item_' . uniqid()
+            'key' => $itemKey ?? 'item_' . uniqid(),
+            'name' => 'Test Item ' . uniqid(),
         ]);
 
         foreach ($propertiesData as $propData) {
@@ -75,6 +80,7 @@ class EavFixture
                 'key' => $propData['key']
             ], [
                 'name' => ucfirst($propData['key']),
+                'type' => $propData['type'] ?? 'string',
                 'is_collection' => $propData['is_collection'] ?? false
             ]);
 

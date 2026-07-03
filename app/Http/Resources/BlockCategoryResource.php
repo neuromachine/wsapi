@@ -12,20 +12,24 @@ class BlockCategoryResource extends JsonResource
     {
         $assembler = new CategoryPayloadAssembler($this->resource, $request->locale);
 
-        return array_merge(
-            $this->attributesToArray(),
-            [
-                'section' => $request->locale, // TODO: refactor to explicit scope or separate mapping
-                'content' => $assembler->resolveContent(),
-                'sections' => $assembler->resolveSections(),
-                'subcategories' => $assembler->resolveSubitems(),
-                'blocks' => BlockResource::collection(
-                    $this->whenLoaded('blocks')
-                ),
-                'children' => BlockCategoryResource::collection(
-                    $this->whenLoaded('childrenRecursive')
-                ),
-            ]
-        );
+        return [
+            'id' => $this->id,
+            'key' => $this->key,
+            'name' => $this->name,
+            'description' => $this->description,
+            'content' => $assembler->resolveContent(),
+            'parent_id' => $this->parent_id,
+            'created_at' => $this->created_at,
+            'updated_at' => $this->updated_at,
+            'section' => $request->locale, // TODO: refactor to explicit scope or separate mapping
+            'sections' => $assembler->resolveSections(),
+            'subcategories' => $assembler->resolveSubitems(),
+            'blocks' => BlockResource::collection(
+                $this->whenLoaded('blocks')
+            ),
+            'children' => BlockCategoryResource::collection(
+                $this->whenLoaded('childrenRecursive')
+            ),
+        ];
     }
 }

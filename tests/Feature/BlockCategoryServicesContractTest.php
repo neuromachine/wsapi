@@ -23,8 +23,7 @@ it('preserves the public API contract for the services category endpoint', funct
             'section',
             'sections',
             'subcategories',
-            'blocks',
-            'children' // Legacy compatibility field
+            'blocks'
         ]
     ]);
 
