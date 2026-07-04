@@ -2,35 +2,26 @@
 
 ## Status
 
-Architecture context / backend data import documentation.
+Canonical architecture document for the WS content data pipeline after the initial backend refactor, seeding inventory, service-offer localization, category-description localization, and CP batch generation.
 
-This document describes the current and intended role of the block content seeding/import pipeline in the WebSolutions Laravel backend. It is not a task file and does not prescribe immediate code changes.
-
----
-
-## Purpose
-
-The seed pipeline is responsible for getting structured project content into the database.
-
-The read-side API depends on this seeded data, but the seeding pipeline is a separate concern.
-
-Important separation:
+This document replaces the earlier incomplete idea of “Content Seed Pipeline” with a broader architecture view:
 
 ```text
-Seed pipeline:
-  how data enters the database
-
-Read-side pipeline:
-  how data is loaded from the database and returned by API
+Content source
+  -> Seeder/import logic
+    -> EAV database storage
+      -> Eloquent read model
+        -> API assembly / resources
+          -> frontend-facing JSON contract
 ```
-
-Do not mix refactors of these two systems unless a task explicitly asks for it.
 
 ---
 
-## Current Data Model Context
+## 1. System purpose
 
-The backend content model is built around:
+The WS backend works as a lightweight content platform / headless CMS core for a Vue SPA.
+
+The platform uses:
 
 ```text
 blocks
@@ -40,423 +31,226 @@ block_item_properties
 block_item_property_values
 ```
 
-Conceptual layers:
+These tables allow the project to add new content structures without creating a database migration for every new UI section, offer package, portfolio item, page, commercial proposal, or navigation item.
 
-```text
-STRUCTURE LAYER
-  blocks
-  blocks_categories
-
-ENTITY LAYER
-  block_items
-
-SCHEMA LAYER
-  block_item_properties
-
-DATA LAYER
-  block_item_property_values
-```
-
-The seed pipeline populates these layers.
-
-The API read-side later consumes these layers through Repository, Resource, `EavContentResolver`, and `BlockAttachMap`.
+The content is usually authored as JSON files and imported through Laravel seeders.
 
 ---
 
-## Current File-Based Content Source
-
-The project has a file-based content source under Laravel storage.
-
-Documented structure:
+## 2. Canonical data path
 
 ```text
-storage/
-└── app/
-    └── blocks/
-        └── cat/
-            ├── {category}/
-            │   ├── {block_key}.json
-            │   └── ...
-            └── ...
+storage/app/blocks/**/*.json
+  -> BlockContentHelper
+    -> Seeder
+      -> ImportHelper / DB writes
+        -> EAV tables
+          -> Repository eager loading by locale
+            -> EavContentResolver / CategoryPayloadAssembler
+              -> Resource
+                -> API JSON
+                  -> Vue stores / components
 ```
 
-Each JSON file represents structured content for a block/category context.
-
-The filename without `.json` acts as a content key.
-
----
-
-## Laravel 12 Filesystem Detail
-
-In this project context, Laravel 12 uses a changed `local` disk root:
+The practical project rule:
 
 ```text
-storage/app/private
-```
-
-Therefore block content should not be read through the default `local` disk when targeting:
-
-```text
-storage/app/blocks
-```
-
-The project uses a dedicated disk:
-
-```php
-Storage::disk('blocks')
-```
-
-with root:
-
-```text
-storage/app/blocks
-```
-
-Important rule:
-
-```text
-All block content file reads should use Storage::disk('blocks').
+Content work should normally modify JSON files.
+Backend code changes are required only when the content family, schema keys, or API shape must be extended.
 ```
 
 ---
 
-## BlockContentHelper
+## 3. Core content families
 
-Current documented helper:
-
-```text
-database/seeders/Helpers/BlockContentHelper.php
-```
-
-Core methods:
-
-```php
-getBlockKeys(string $category): Collection
-getBlockContent(string $category, string $key): array
-```
-
-Conceptual role:
-
-```text
-BlockContentHelper
-  → lists JSON files in a content category
-  → derives keys from filenames
-  → reads JSON content
-  → decodes with JSON_THROW_ON_ERROR
-```
-
-It is part of the import pipeline, not the runtime API read-side.
+| Family | Purpose | Source | Seeder | Main API effect |
+|---|---|---|---|---|
+| Service categories | Service catalog taxonomy and category content | `storage/app/blocks/cat/*.json`, `cat/{group}/*.json`, `tree.json` | `BlocksServicesCategoriesSeeder`, `BlocksCategoriesSeeder`, `BlockItemsForCategoriesDesrDataSeeder` | `GET /api/{locale}/blocks/categories/services`, `subcategories` |
+| Service offers | Price/package blocks on service category pages | `storage/app/blocks/items/{categoryKey}.json` | `ServicesBlockSeeder` | `blocks` / `offers` data inside category endpoint |
+| Individual CP / ind_offers | Standalone commercial proposal payloads | `storage/app/blocks/blocks/items/ind_offers/{proposalKey}.json` | `BlockForCpDataSeeder` | `GET /api/{locale}/blocks/categories/offers/{proposalKey}` |
+| Pages | Static page content | `storage/app/blocks/blocks/items/pages/*.json` | `BlockForPagesDataSeeder` | Page item endpoints / page blocks |
+| Portfolio | Portfolio items and project cards | `storage/app/blocks/cat/portfolio/*.json` and related item files | `BlockForPortfolioDataSeeder` | Portfolio category/item endpoints |
+| Main sections | Main page sections | `storage/app/blocks/cat/main/*.json` | `BlocksForMainSectionsSeeder` | Main page block composition |
+| Navigation | Header/footer navigation entries | `storage/app/blocks/blocks/items/navigation/*.json`, `blocks/navigation.json` | `BlocksForNavigationSeeder` | Navigation payload |
+| descr_data | Category/page descriptive EAV item | `storage/app/blocks/blocks/items/descr_data/*.json` | `BlockItemsForCategoriesDesrDataSeeder` | `data.content`, category descriptions, SEO-like payload |
 
 ---
 
-## Current Import Flow
+## 4. Locale model
 
-Conceptual flow:
+Current locale model for most modern JSON content families:
 
 ```text
-storage/app/blocks/cat/{category}/{key}.json
-    ↓
-Storage::disk('blocks')->files('cat/{category}')
-    ↓
-BlockContentHelper::getBlockKeys($category)
-    ↓
-BlockContentHelper::getBlockContent($category, $key)
-    ↓
-Seeder transforms/normalizes array
-    ↓
-Eloquent write/upsert/updateOrInsert
-    ↓
-Database tables
+ru -> root properties
+en -> en.properties
+vi -> vi.properties
 ```
 
-The exact seeder set may differ by content domain.
+Example:
 
-Known seeder categories include areas such as:
+```json
+{
+  "key": "example",
+  "name": "Russian name",
+  "properties": {
+    "title": "Russian title"
+  },
+  "en": {
+    "name": "English name",
+    "properties": {
+      "title": "English title"
+    }
+  },
+  "vi": {
+    "properties": {}
+  }
+}
+```
+
+Rules:
 
 ```text
-- blocks
-- categories
-- items
-- properties
-- property values
-- services
-- portfolio
-- pages
-- navigation
-- individual offers
-- main sections
+- root properties are the Russian source of truth;
+- en.properties contains English payloads;
+- vi.properties may be a placeholder when Vietnamese copy is not ready;
+- empty locale property objects must be skipped by seeders, not inserted as hollow values;
+- no arbitrary locale key should be introduced until supported by seeder code or helper configuration.
 ```
 
 ---
 
-## Why the Seed Pipeline Matters
+## 5. Seeder safety classes
 
-The API read-side may look complex partly because seeded data contains historical structure, naming debt, and compatibility keys.
+### Safer content seeders
 
-Examples of content/schema debt that may originate or be reinforced through seeders:
+These are intended for repeated content updates when the base schema already exists:
 
 ```text
-acticle vs article
-childs vs children
-items ambiguity
-locale-specific property values
-hardcoded block keys
-hardcoded category keys
-legacy JSON shapes
+ServicesBlockSeeder
+BlockForCpDataSeeder
+BlockForPagesDataSeeder
+BlockForPortfolioDataSeeder
+BlocksForMainSectionsSeeder
+BlocksForNavigationSeeder
+BlockItemsForCategoriesDesrDataSeeder
 ```
 
-However, these should not be “fixed” casually in seeders because the frontend may already depend on the resulting API shape.
+They generally use `updateOrInsert`, `upsertItem`, or controlled upsert-like logic.
+
+### Risky / structural seeders
+
+These should not be run casually during content production:
+
+```text
+BlocksMainCategoriesSeeder
+BlocksServicesCategoriesSeeder
+BlocksCategoriesSeeder
+BlockSeeder
+```
+
+Risks include manual ID assumptions, truncation/deletion, and schema reset behavior.
 
 ---
 
-## Seed Pipeline vs API Contract
+## 6. Current production status after CONTENT-001..004
 
-Changing seeders can change runtime API output.
-
-For example, changing a property key in seed data may alter frontend-visible response fields after seeding.
-
-Therefore, seeder refactors must preserve:
+Completed content-production work:
 
 ```text
-- content keys
-- block keys
-- category keys
-- locale coverage
-- property keys
-- property value types
-- frontend-facing aliases
+CONTENT-001:
+  all 61 service offer files received en.name / en.properties payloads.
+
+CONTENT-002:
+  all 61 service offer files were normalized for package quality.
+  The recommended package is the only featured package.
+  Duplicate features and formatting inconsistencies were removed.
+
+CONTENT-003:
+  83 category description JSON files received / improved en.properties.descr and en.properties.content.
+  _blank.json was skipped as a hollow template.
+
+CONTENT-004:
+  6 Vietnam tourism CP JSON files were generated for ind_offers.
+  RU and EN payloads are complete; VI remains placeholder.
 ```
 
-unless a separate migration task explicitly approves breaking or transitional changes.
+Recommended seeding commands after this work:
+
+```bash
+php artisan db:seed --class=ServicesBlockSeeder
+php artisan db:seed --class=BlockForCpDataSeeder
+```
+
+Category description updates may require category/descr_data seeders, but structural seeders must be treated carefully because the inventory found destructive/idempotency risks.
 
 ---
 
-## Current Architectural Strengths
+## 7. Relationship to frontend
 
-The file-based seed pipeline has useful properties:
+The frontend should receive denormalized JSON. It should not know about:
 
 ```text
-- content can be versioned as files
-- content can be reproduced across environments
-- JSON parsing can fail loudly with JSON_THROW_ON_ERROR
-- Storage disk abstraction isolates Laravel filesystem changes
-- seeders encode initial content structure
+property_id
+item_id
+block_item_property_values.id
+value_type internals
+EAV joins
+seeder source file paths
 ```
 
-This is a good foundation for a CMS-like or content-platform workflow.
+The backend read-side resolves EAV into logical content objects.
+
+Standard category endpoint:
+
+```text
+GET /api/{locale}/blocks/categories/{slug}
+```
+
+returns a Laravel Resource envelope:
+
+```json
+{
+  "data": {
+    "id": 2,
+    "key": "services",
+    "content": {},
+    "subcategories": [],
+    "blocks": [],
+    "sections": []
+  }
+}
+```
+
+Individual offer endpoint:
+
+```text
+GET /api/{locale}/blocks/categories/offers/{proposalKey}
+```
+
+is intentionally flat:
+
+```json
+{
+  "category": {},
+  "block": {},
+  "items": []
+}
+```
+
+This asymmetry is currently part of the public contract and must not be changed without frontend handoff.
 
 ---
 
-## Current Architectural Risks
+## 8. Agent rules
 
-Known or likely risks:
-
-```text
-- many seeders with unclear active/legacy status
-- implicit seeder execution order
-- possible hardcoded IDs
-- repeated logic for resolving blocks/categories/items/properties
-- mixed JSON formats
-- content keys that double as API contract
-- inconsistent naming inherited by frontend
-- possible encoding artifacts from exports/imports
-```
-
-These risks justify a future optional seeder refactor, but not as part of ordinary read-side cleanup.
-
----
-
-## Seeder Refactor Boundary
-
-The seed pipeline should be refactored separately from the read-side API.
-
-Acceptable future improvements:
+When adding or changing content:
 
 ```text
-- centralize JSON reading
-- improve error messages
-- document seeder order
-- reduce duplicated resolver logic
-- replace hardcoded IDs with key-based lookups where safe
-- use transactions where appropriate
-- make upsert/updateOrInsert patterns consistent
-- preserve output data
-```
-
-Forbidden in an ordinary seed refactor:
-
-```text
-- change actual content text casually
-- rename public keys casually
-- remove locale data
-- change DB schema
-- change API response shape
-- rewrite all seeders into a large framework without need
-- mix with Resource/Repository refactor
-```
-
----
-
-## Suggested Future Refactor Strategy
-
-When a dedicated seeder task is created, use stages.
-
-### Stage 1 — Inventory
-
-Map each seeder:
-
-```text
-Seeder name
-Purpose
-Input source
-Output tables
-Dependencies
-Active / legacy / unknown
-Risk level
-```
-
-### Stage 2 — Identify Repetition
-
-Look for repeated operations:
-
-```text
-- find block by key
-- find category by key
-- find property by key
-- create/update block item
-- create/update property value
-- handle locale arrays
-- read JSON files
-```
-
-### Stage 3 — Extract Small Utilities
-
-Prefer small helpers over large abstraction.
-
-Examples:
-
-```text
-- key-based model resolver
-- property value writer
-- locale payload normalizer
-- content file reader
-- seeder logging helper
-```
-
-### Stage 4 — Preserve Output
-
-After refactor, seeded output should be equivalent unless a difference is explicitly documented and approved.
-
----
-
-## Relationship to TASK-BE-003
-
-The future optional task `TASK-BE-003` should focus on this pipeline.
-
-It should not be mixed with `TASK-BE-002` read-side refactor.
-
-Expected principle:
-
-```text
-same content
-same keys
-same API compatibility
-less duplication
-clearer import flow
-safer future extension
-```
-
----
-
-## Relationship to Read-Side Refactor
-
-Read-side refactor may reveal that some API weirdness originates in seed data.
-
-However, the default action should be:
-
-```text
-Document the seed/source issue.
-Preserve compatibility in read-side response.
-Move actual seed/content migration to a separate task.
-```
-
-This prevents accidental breakage of working frontend pages.
-
----
-
-## Relationship to AIP Documents
-
-Future Architecture Improvement Proposal documents should discuss:
-
-```text
-- whether seed pipeline should become content import layer
-- whether JSON source format should be normalized
-- whether block metadata should be seeded into DB
-- whether naming debt should be solved via alias/migration layer
-- how to transition from legacy keys safely
-```
-
-Until then, this document only stabilizes understanding.
-
----
-
-## Guidance for Future Agents
-
-When touching seeders or content import:
-
-```text
-1. Inventory before editing.
-2. Do not assume old seeders are unused.
-3. Preserve keys and locale coverage.
-4. Prefer key-based resolution over hardcoded IDs when safe.
-5. Do not change API contract accidentally.
-6. Do not mix seeder refactor with Resource/Repository refactor.
-7. Report content/schema risks separately.
-8. Keep generated DB output equivalent where possible.
-```
-
----
-
-## Manual Regression Notes
-
-After seeder changes, verify as much as possible:
-
-```text
-- database seeds without fatal errors
-- expected blocks exist
-- expected categories exist
-- expected items exist
-- expected properties exist
-- expected property values exist for ru/en/vi where applicable
-- /en/blocks/categories/services still returns compatible data
-- no public keys disappear
-```
-
-If full seeding cannot be run, provide a static safety report.
-
----
-
-## Summary
-
-The content seed pipeline is the write/import side of the backend content system.
-
-Its correct role:
-
-```text
-structured source files / seed definitions
-  → reproducible database content
-```
-
-It should be improved carefully and separately from read-side API refactors.
-
-The goal is not to rewrite content history.
-
-The goal is:
-
-```text
-same content
-clearer pipeline
-less duplication
-safer future imports
-no broken API consumers
+- prefer JSON changes;
+- preserve legacy keys: childs, acticle, section;
+- preserve locale model: root properties for ru, {locale}.properties for non-RU;
+- do not invent unsupported property keys;
+- do not run structural/destructive seeders unless explicitly requested;
+- verify via the specific endpoint affected by the content family;
+- document changed files and seed command.
 ```

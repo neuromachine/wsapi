@@ -1,29 +1,61 @@
-# Stage 15 — WS Content Seeding Tasks Package
+# Stage 16 — Content Data Architecture Package
 
-Purpose: continue practical content production after seeding-layer inventory.
+This package consolidates the current WS content data architecture after the backend refactor, seeding inventory, locale expansion, offer normalization, and CP generation work.
 
-This package focuses on JSON content creation and normalization, not backend architecture refactoring.
+It is designed for placement into the repository root and for reuse by agent systems.
 
-Copy `.agents/` into the WSAPI repository root.
+## Main purpose
 
-Recommended execution order:
-
-```text
-CONTENT-001 -> CONTENT-002 -> CONTENT-003 -> CONTENT-004
-```
-
-Main rule:
+Describe the full data path:
 
 ```text
-Do not change backend PHP code unless a task explicitly allows it.
-Generate and normalize JSON sources according to the current seeding contracts.
+JSON source files
+  -> Laravel seeders
+    -> EAV database tables
+      -> Eloquent models / repositories
+        -> EavContentResolver / assemblers / resources
+          -> API payload
+            -> Vue frontend consumption
 ```
 
-Key current seeding contracts:
+## Main files
 
-- Service offers source: `storage/app/blocks/items/{categoryKey}.json`
-- Service offers seeder: `database/seeders/ServicesBlockSeeder.php`
-- Individual CP source: `storage/app/blocks/blocks/items/ind_offers/{proposalKey}.json`
-- Individual CP seeder: `database/seeders/BlockForCpDataSeeder.php`
-- Locale model: `ru` = root `properties`, `en/vi` = `{locale}.properties`
-- Empty locale payloads may exist as placeholders but must not create hollow EAV values.
+```text
+.agents/info/BE-08-content-seed-pipeline.md
+.agents/info/BE-09-eav-database-field-map.md
+.agents/info/BE-10-content-source-registry.md
+.agents/info/BE-11-seeder-process-map.md
+.agents/info/BE-12-api-data-lift-and-resource-flow.md
+.agents/info/BE-13-content-production-status.md
+
+.agents/contracts/CONTENT-DATABASE-FIELD-CONTRACT.md
+.agents/contracts/CONTENT-JSON-SOURCE-CONTRACT.md
+.agents/contracts/CONTENT-SEEDER-CONTRACT.md
+.agents/contracts/API-FRONTEND-DATA-HANDOFF-DRAFT.md
+.agents/contracts/CONTENT-FAMILY-CONTRACTS.md
+
+.agents/workflows/RUN-CONTENT-DATA-ARCHITECTURE-HANDOFF.md
+.agents/tasks/TASK-DOC-001-content-data-architecture-finalization.md
+```
+
+## How to use
+
+For agents working on content JSON:
+
+1. Read `BE-08-content-seed-pipeline.md`.
+2. Read `CONTENT-JSON-SOURCE-CONTRACT.md`.
+3. Read the relevant content family section in `CONTENT-FAMILY-CONTRACTS.md`.
+4. Modify JSON only.
+5. Run only the appropriate content seeder.
+
+For agents working on backend data flow:
+
+1. Read `BE-09-eav-database-field-map.md`.
+2. Read `BE-12-api-data-lift-and-resource-flow.md`.
+3. Read `CONTENT-DATABASE-FIELD-CONTRACT.md`.
+4. Preserve API response contracts.
+
+For agents preparing frontend handoff:
+
+1. Read `API-FRONTEND-DATA-HANDOFF-DRAFT.md`.
+2. Treat it as draft / prototype until the frontend contract pass is explicitly performed.
