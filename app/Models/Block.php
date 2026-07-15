@@ -13,11 +13,11 @@ class Block extends Model
 
     public function items()
     {
-        return $this->hasMany(BlockItem::class, 'block_id')->with('properties.property');
+        return $this->hasMany(BlockItem::class, 'block_id')->with('propertyValues.property');
     }
 
     public function itemsForCategory($categoryId)
     {
-        return $this->hasMany(BlockItem::class, 'block_id')->with('properties.property')->where('category_id', $categoryId);;
+        return $this->hasMany(BlockItem::class, 'block_id')->with('propertyValues.property')->where('category_id', $categoryId);;
     }
 }

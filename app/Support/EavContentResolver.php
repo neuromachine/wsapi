@@ -18,7 +18,7 @@ class EavContentResolver
         };
     }
 
-    private static function flattenItem($item): array
+    public static function resolveItem($item): array
     {
         $result = [];
 
@@ -78,15 +78,15 @@ class EavContentResolver
 
         if ($single) {
             $item = $items->first();
-            return $item ? self::flattenItem($item) : [];
+            return $item ? self::resolveItem($item) : [];
         }
 
         if ($keyed) {
             return $items->mapWithKeys(function ($item) {
-                return [$item->key => self::flattenItem($item)];
+                return [$item->key => self::resolveItem($item)];
             })->all();
         }
 
-        return $items->map(fn($item) => self::flattenItem($item))->values()->all();
+        return $items->map(fn($item) => self::resolveItem($item))->values()->all();
     }
 }

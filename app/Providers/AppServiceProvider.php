@@ -20,8 +20,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        Route::middleware('api')
-            ->prefix('api')
-            ->group(base_path('routes/api.php'));
+        // Removed redundant route registration. In Laravel 11, api routes are already registered in bootstrap/app.php.
     }
 }

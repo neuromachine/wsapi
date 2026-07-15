@@ -87,6 +87,18 @@ class BlockItemPropertyValueResource extends Resource
 
                 Select::make('value_type')
                     ->label('Тип данных')
+                    ->hint(function (Forms\Get $get) {
+                        $propertyId = $get('property_id');
+                        if ($propertyId) {
+                            $property = \App\Models\BlockItemProperty::find($propertyId);
+                            if ($property) {
+                                $collection = $property->is_collection ? ' (Collection)' : '';
+                                return "Expected type: {$property->type}{$collection}";
+                            }
+                        }
+                        return null;
+                    })
+                    ->hintColor('warning')
                     ->options([
                         'string' => 'string',
                         'json' => 'json',
