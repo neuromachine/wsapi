@@ -60,13 +60,44 @@ class BlockCategoryRepository
 
     public function getOffersData(string $locale, string $slug): array
     {
-        $category = BlocksCategories::where('key', $slug)->firstOrFail();
-        $block = \App\Models\Block::where('key', 'offers')->firstOrFail();
+        // Try to find a category by slug
+        $category = BlocksCategories::where('key', $slug)->first();
+        $singleItem = null;
+        
+        // If not found, check if the slug is an item key
+        if (!$category) {
+            $singleItem = \App\Models\BlockItem::where('key', $slug)->firstOrFail();
+            $category = $singleItem->category;
+        }
+        
+        // Find which blocks have items in this category
+        $blockIds = \App\Models\BlockItem::where('category_id', $category->id)
+            ->distinct()
+            ->pluck('block_id');
+            
+        $blocks = \App\Models\Block::whereIn('id', $blockIds)->get();
+        
+        // The "offers" block is any block not mapped to standard structural sections
+        $offerBlocks = $blocks->reject(function ($b) {
+            return \App\Support\BlockAttachMap::get($b->key) !== null;
+        });
+        
+        $block = $offerBlocks->first();
+        
+        // Fallback to strict 'offers' if no semantic offer block is found
+        if (!$block) {
+            $block = \App\Models\Block::where('key', 'offers')->firstOrFail();
+        }
 
-        $items = $block->items()
+        $query = $block->items()
             ->where('category_id', $category->id)
-            ->with(['propertyValues.property']) // подгружаем связи
-            ->get();
+            ->with(['propertyValues.property']);
+            
+        if ($singleItem) {
+            $query->where('id', $singleItem->id);
+        }
+        
+        $items = $query->get();
 
         return [
             'category' => $category,
